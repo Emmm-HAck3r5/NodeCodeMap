@@ -11,9 +11,9 @@
 
 const char *nc_csign_char_set = "+-*/%=!<>&.|~^()[]{};,";
 const char *nc_csign_first_char_set = "+-*/%=!<>&.|^";
-_Bool nc_c_is_sign(char c)
+int nc_c_is_sign(char c)
 {
-	if ((strchr(nc_csign_char_set, c)) != NULL)
+	if ((strchr(nc_csign_char_set, c)) != NULL&&c!='\0')
 		return true;
 	else
 		return false;

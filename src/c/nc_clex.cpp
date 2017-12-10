@@ -46,6 +46,10 @@ void nc_lex_open(void)
 		current_lineno = 0;
 		current_token = NULL;
 	}
+	if (buffer == NULL)
+	{
+		buffer = eh_string_init(256);
+	}
 }
 void nc_lex_close(void)
 {
@@ -65,8 +69,9 @@ void nc_lex_close(void)
 	}
 	current_lineno = 0;
 	current_token = NULL;
+	free(buffer);
 }
-_Bool nc_is_in_set(char c, const char *set, int set_length)
+int nc_is_in_set(char c, const char *set, int set_length)
 {
 	int i;
 	for (i = 0; i < set_length; i++)
@@ -75,7 +80,7 @@ _Bool nc_is_in_set(char c, const char *set, int set_length)
 	return false;
 }
 
-_Bool nc_is_identifier(char c)
+int nc_is_identifier(char c)
 {
 	if ((c >= 'a'&&c <= 'z') || (c >= 'A'&&c <= 'Z') || (c >= '0'&&c <= '9') || c == '_')
 		return true;
@@ -119,10 +124,10 @@ char nc_parse_tmchar(char c)
 		return -1;
 	}
 }
-_Bool nc_analyze_dep(NC_File *fp, u32 c)
+int nc_analyze_dep(NC_File *fp, u32 c)
 {
 	static int state = CLEX_NORMAL;
-	_Bool move_cursor = true;
+	int move_cursor = true;
 	u32 token_type;
 	token_type = CTK_NULL;
 	current_token = NULL;
@@ -158,7 +163,7 @@ _Bool nc_analyze_dep(NC_File *fp, u32 c)
 	}
 	if (token_type != CTK_NULL)
 	{
-		current_token = nc_ctoken_generate(token_type, buffer, current_lineno);
+		current_token = nc_ctoken_generate((CTokenType)token_type, buffer, current_lineno);
 		nc_token_stream_add(current_token);
 	}
 	return move_cursor;
@@ -167,7 +172,6 @@ _Bool nc_analyze_dep(NC_File *fp, u32 c)
 void nc_analyze_token_dep(NC_File *fp)
 {
 	u32 c;
-	nc_lex_open();
 	while (!current_token)
 	{
 		c = nc_getch(fp);
@@ -181,12 +185,11 @@ void nc_analyze_token_dep(NC_File *fp)
 		{
 		}
 	}
-	nc_lex_close();
 }
 
-_Bool nc_analyze_pre(NC_File *fp, u32 c)
+int nc_analyze_pre(NC_File *fp, u32 c)
 {
-
+	return 0;
 }
 
 void nc_analyze_token_pre(NC_File *fp)
@@ -194,15 +197,16 @@ void nc_analyze_token_pre(NC_File *fp)
 
 }
 
-_Bool nc_analyze(NC_File *fp, u32 c)
+int nc_analyze(NC_File *fp, u32 c)
 {
 	static int state = CLEX_NORMAL;
-	static _Bool is_tmchar = false;
-	_Bool move_cursor = true;
+	static int is_tmchar = false;
+	static int anno_type = -1;
+	int move_cursor = true;
 	u32 token_type;
 	token_type = CTK_NULL;
 	current_token = NULL;
-	if (state = CLEX_NORMAL)
+	if (state == CLEX_NORMAL)
 	{
 		if (nc_is_identifier(c))
 			state = CLEX_IDENTIFIER;
@@ -233,10 +237,14 @@ _Bool nc_analyze(NC_File *fp, u32 c)
 			current_lineno++;
 			move_cursor = true;
 		}
-		else if (c == '/')
+		else if (c == '\\')
 		{
 			current_lineno--;
 			move_cursor = true;
+		}
+		else if (c == NC_FILE_EOF)
+		{
+			token_type = CTK_ENDSYMBOL;
 		}
 		else
 			printf("error\n");
@@ -255,19 +263,27 @@ _Bool nc_analyze(NC_File *fp, u32 c)
 	}
 	else if (state == CLEX_SIGN)
 	{
+		char next = nc_getch(fp);
 		if (c == '.')
 		{
-			char next = nc_getch(fp);
 			if (next <= '9'&&next >= '0')
 			{
 				state = CLEX_NUM;
 				move_cursor = false;
 			}
-			nc_ungetch(fp);
 		}
+		else if (c == '/')
+		{
+			if (next == '/' || next == '*')
+			{
+				state = CLEX_ANNOATAION;
+				move_cursor = true;
+			}
+		}
+		nc_ungetch(fp);
 		nc_csign_parse(fp, c);
 	}
-	else if (state = CLEX_STRING)
+	else if (state == CLEX_STRING)
 	{
 		if (c == '\n')
 			printf("Illegal string.\n");
@@ -304,7 +320,41 @@ _Bool nc_analyze(NC_File *fp, u32 c)
 	}
 	else if (state == CLEX_ANNOATAION)
 	{
-		//½âÎö×¢ÊÍ
+		if (anno_type == -1)
+		{
+			if (c == '/')
+			{
+				anno_type = 0;
+			}
+			else if (c == '*')
+			{
+				anno_type = 1;
+			}
+			eh_string_appendc(buffer, c, 1);
+		}
+		else if (anno_type == 0)
+		{
+			eh_string_appendc(buffer, c, 1);
+			if (c == '\n')
+			{
+				state = CLEX_NORMAL;
+				token_type = CTK_ANNO;
+				move_cursor = false;
+			}
+		}
+		else if (anno_type == 1)
+		{
+			eh_string_appendc(buffer, c, 1);
+			if (c == '/')
+			{
+				if (buffer->value[buffer->length - 2] == '*')
+				{
+					state = CLEX_NORMAL;
+					token_type = CTK_ANNO;
+					move_cursor = true;
+				}
+			}
+		}
 	}
 	else if (state == CLEX_SPACE)
 	{
@@ -316,12 +366,14 @@ _Bool nc_analyze(NC_File *fp, u32 c)
 	}
 	else if (state == CLEX_PREPROCESS)
 	{
-		//Ô¤´¦Àí
+		//预处理
 	}
 	if (token_type != CTK_NULL)
 	{
-		current_token = nc_ctoken_generate(token_type, buffer, current_lineno);
+		current_token = nc_ctoken_generate((CTokenType)token_type, buffer, current_lineno);
 		nc_token_stream_add(current_token);
+		if (token_type == CTK_ANNO)
+			anno_type = -1;//复位
 	}
 	return move_cursor;
 }
@@ -329,18 +381,10 @@ _Bool nc_analyze(NC_File *fp, u32 c)
 void nc_analyze_token(NC_File *fp)
 {
 	u32 c;
-	nc_lex_open();
-	while (!current_token)
+	while (token_stream->prev->token_type!=CTK_ENDSYMBOL)
 	{
 		c = nc_getch(fp);
-		if (c == EOF)
-		{
-			current_token = nc_ctoken_generate(CTK_ENDSYMBOL, NULL, current_lineno);
-			nc_token_stream_add(current_token);
-			break;
-		}
 		while (!nc_analyze(fp,c))
 		{ }
 	}
-	nc_lex_close();
 }

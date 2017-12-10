@@ -134,3 +134,21 @@ void eh_string_reverse(EH_String *str)
 		}
 	}
 }
+char* eh_string_toasciistring(char *dest, EH_String *str)
+{
+	if (str)
+	{
+		dest = (char*)realloc(dest, (str->length) * sizeof(char));
+		int i = 0;
+		for (i = 0; i < str->length; i++)
+		{
+			if (str->value[i] > 127)
+				dest[i] = '?';
+			else
+				dest[i] = str->value[i];
+		}
+		dest[i] = '\0';
+		return dest;
+	}
+	return NULL;
+}

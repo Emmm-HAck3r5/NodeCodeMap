@@ -16,7 +16,7 @@ NC_File* nc_file_init(void)
 	fp->file_ptr = 0;
 	return fp;
 }
-void nc_read_file(NC_File *file, char *file_path)
+void nc_read_file(NC_File *file, const char *file_path)
 {
 	FILE *fp = fopen(file_path, "rb");
 	if (fp)

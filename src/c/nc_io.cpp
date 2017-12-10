@@ -9,11 +9,19 @@
  */
 #include "nc_io.h"
 
-void nc_read_file(EH_String *out, char *file_path)
+NC_File* nc_file_init(void)
+{
+	NC_File *fp = (NC_File*)malloc(sizeof(NC_File));
+	fp->file = eh_string_init(4096);
+	fp->file_ptr = 0;
+	return fp;
+}
+void nc_read_file(NC_File *file, char *file_path)
 {
 	FILE *fp = fopen(file_path, "rb");
 	if (fp)
 	{
+		file->file_ptr = 0;
 		unsigned long size;
 		char *buffer;
 		size_t flag;
@@ -27,13 +35,13 @@ void nc_read_file(EH_String *out, char *file_path)
 			buffer[size] = '\0';
 			if (flag == size)
 			{
-				eh_utf8_to_utf32(out, (u8*)buffer);
+				eh_utf8_to_utf32(file->file, (u8*)buffer);
 			}
 		}
 	}
 }
 
-void nc_get_files(EH_Array *files,const char *dir_path)
+void nc_get_cfiles(EH_Array *files,const char *dir_path)
 {
 	char dirbuf[4000];
 	strcpy(dirbuf, dir_path);
@@ -52,7 +60,7 @@ void nc_get_files(EH_Array *files,const char *dir_path)
 			strcpy(dirbuf, dir_path);
 			strcat(dirbuf, "\\");
 			strcat(dirbuf, fd.name);
-			nc_get_files(files, dirbuf);
+			nc_get_cfiles(files, dirbuf);
 		}
 		else
 		{
@@ -67,4 +75,20 @@ void nc_get_files(EH_Array *files,const char *dir_path)
 		}
 	} while (_findnext(handle, &fd) == 0);
 	_findclose(handle);
+}
+
+u32 nc_getch(NC_File *fp)
+{
+	if(fp->file_ptr<fp->file->length)
+		return fp->file->value[fp->file_ptr++];
+	return NC_FILE_EOF;
+}
+
+void nc_file_rewind(NC_File *fp)
+{
+	fp->file_ptr = 0;
+}
+void nc_ungetch(NC_File *fp)
+{
+	fp->file_ptr--;
 }

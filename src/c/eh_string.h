@@ -4,7 +4,7 @@
  * Email: easyai@outlook.com
  * Created Date: 2017-12-08 10:18:35
  * ------
- * Last Modified: 2017-12-08 14:16:37
+ * Last Modified: 2017-12-10 18:05:40
  * Modified By: EasyAI ( easyai@outlook.com )
  */
 #ifndef EH_STRING_H
@@ -16,7 +16,7 @@
 #include "eh_typedef.h"
 #define EH_STRING_NPOS -1
 
-//unicode 字符串
+//unicode ???
 typedef struct EH_String
 {
     unsigned int length;
@@ -24,9 +24,9 @@ typedef struct EH_String
 	u32 *value;
 }EH_String;
 
-#ifdef __cplusplus
-extern "C"{
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
     EH_String* eh_string_init(unsigned int size);
     void eh_string_free(EH_String *str);
     void eh_string_clear(EH_String *str);
@@ -37,8 +37,8 @@ extern "C"{
 	void eh_string_substr(EH_String *dest, EH_String *str, unsigned int begin, int end);
 	int eh_string_copy(EH_String *dest, const EH_String *src);
 	void eh_string_reverse(EH_String *str);
-
-#ifdef __cplusplus
-}
-#endif
+	
+//#ifdef __cplusplus
+//}
+//#endif
 #endif

@@ -23,7 +23,7 @@
 	(__pos__)->__mnext__=__node__;\
 }
 #define __EH_DLIST_DELETE(__list__,__pos__,__mnext__,__mprev__) {\
-	if(!__EAILIB_BASICDLIST_EMPTY(__list__,__mnext__,__mprev__))\
+	if(!__EH_DLIST_EMPTY(__list__,__mnext__,__mprev__))\
 	{\
 		(__pos__)->__mnext__->__mprev__=(__pos__)->__mprev__;\
 		(__pos__)->__mprev__->__mnext__=(__pos__)->__mnext__;\

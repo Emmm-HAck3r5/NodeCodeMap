@@ -1,3 +1,12 @@
+/*
+ * File: nc_cstruct.h
+ * Author: EasyAI
+ * Email: easyai@outlook.com
+ * Created Date: 2017-12-08 19:09:49
+ * ------
+ * Last Modified: 2017-12-10 18:07:46
+ * Modified By: EasyAI ( easyai@outlook.com )
+ */
 #ifndef NC_CSTRUCT_H
 #define NC_CSTRUCT_H
 
@@ -29,8 +38,9 @@ typedef struct NC_CCompInfo
 {
 	EH_String *file_path;
 	EH_String *decl;
-	EH_String *need;
+	EH_Array *need;
 	u32 lineno;
+	u32 pos;//该变量用于获取decl，存储的是ftell返回值
 }*NC_CFileInfo;
 typedef enum NC_CTypeType
 {
@@ -50,6 +60,7 @@ typedef enum NC_CTypeModifier
 	NC_CTypeModifier_Extern = 0x4,
 	NC_CTypeModifier_Register = 0x8,
 	NC_CTypeModifier_Volatile = 0x10,
+	NC_CTypeModifier_Auto = 0x20
 }NC_CTypeModifier;
 typedef struct NC_CType
 {

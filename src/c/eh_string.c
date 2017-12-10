@@ -53,7 +53,7 @@ void eh_string_realloc(EH_String *str, unsigned int newsize)
 		if (str->value)
 		{
 			str->buffersize = temp;
-			str->value = (u32*)realloc(str->value, temp);
+			str->value = (u32*)realloc(str->value, temp*sizeof(u32));
 		}
 	}
 }
@@ -63,7 +63,7 @@ void eh_string_appendc(EH_String *str, u32 c, int n)
 	{
 		str->length += n;
 		if (str->length >= str->buffersize)
-			eh_string_realloc(str, str->length);
+			eh_string_realloc(str, str->length+1);
 		for (; n > 0; n--)
 			str->value[str->length - n] = c;
 		str->value[str->length] = '\0';
@@ -84,7 +84,7 @@ int eh_string_findc(EH_String *str, u32 c)
 	}
 	return EH_STRING_NPOS;
 }
-EH_String* eh_string_substr(EH_String *src, unsigned int begin, int end)
+void eh_string_substr(EH_String *dest, EH_String *src, unsigned int begin, int end)
 {
 	if (src)
 	{
@@ -92,19 +92,15 @@ EH_String* eh_string_substr(EH_String *src, unsigned int begin, int end)
 			end = src->length - 1;
 		if (end < src->length&& begin <= end)
 		{
-			EH_String *p;
 			unsigned int size = end - begin + 2;
-			p = eh_string_init(size);
-			if (p)
+			if (dest)
 			{
-				p->length = size - 1;
-				memcpy(p->value, &(src->value[begin]), p->length * sizeof(u32));
-				p->value[p->length] = '\0';
+				dest->length = size - 1;
+				memcpy(dest->value, &(src->value[begin]), dest->length * sizeof(u32));
+				dest->value[dest->length] = '\0';
 			}
-			return p;
 		}
 	}
-	return NULL;
 }
 int eh_string_copy(EH_String *dest, const EH_String *src)
 {

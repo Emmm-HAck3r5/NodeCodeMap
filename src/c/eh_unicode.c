@@ -9,11 +9,10 @@
  */
 #include "eh_unicode.h"
 
-EH_String* eh_utf8_to_utf32(u8 *utf8str)
+void eh_utf8_to_utf32(EH_String *dest, u8 *utf8str)
 {//TODO 大小端问题
-	if (utf8str)
+	if (utf8str&&dest)
 	{
-		EH_String *ucsstr = eh_string_init(16);
 		u32 ucs;
 		u8 *byte = utf8str;
 		while (*byte)
@@ -66,9 +65,7 @@ EH_String* eh_utf8_to_utf32(u8 *utf8str)
 						ucs |= (u32)(*byte++ & 0x3F) << ((4 - i) * 6);
 				}
 			}
-			eh_string_appendc(ucsstr, ucs, 1);
+			eh_string_appendc(dest, ucs, 1);
 		}
-		return ucsstr;
 	}
-	return NULL;
 }

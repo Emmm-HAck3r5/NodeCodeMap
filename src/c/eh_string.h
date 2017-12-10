@@ -34,7 +34,7 @@ extern "C"{
 	void eh_string_appendc(EH_String *str, u32 c, int n);
 	u32 *eh_string_tostring(EH_String *str);
 	int eh_string_findc(EH_String *str, u32 c);
-	EH_String* eh_string_substr(EH_String *str, unsigned int begin, int end);
+	void eh_string_substr(EH_String *dest, EH_String *str, unsigned int begin, int end);
 	int eh_string_copy(EH_String *dest, const EH_String *src);
 	void eh_string_reverse(EH_String *str);
 

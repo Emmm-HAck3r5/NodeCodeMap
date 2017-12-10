@@ -15,7 +15,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	EH_String* eh_utf8_to_utf32(const u8 *utf8str);
+	void eh_utf8_to_utf32(EH_String *dest, u8 *utf8str);
 #ifdef __cplusplus
 }
 #endif

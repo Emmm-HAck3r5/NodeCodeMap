@@ -46,7 +46,7 @@ void eh_array_append(EH_Array *arr, void *elm)
 {
 	arr->elmcount++;
 	if (arr->elmcount > arr->buffersize)
-		EH_Array_realloc(arr, arr->elmcount);
+		eh_array_realloc(arr, arr->elmcount);
 	arr->data[arr->elmcount - 1] = elm;
 }
 int eh_array_count(EH_Array *arr)

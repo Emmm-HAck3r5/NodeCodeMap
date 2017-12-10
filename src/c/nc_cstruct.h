@@ -10,11 +10,13 @@
 
 typedef enum NC_CFileType
 {
-	NC_CFile_H, NC_CFile_C
+	NC_CFile_H = 0x1, NC_CFile_C = 0x2,
+	NC_CFile_STD = 0x10
 }NC_CFileType;
 typedef struct NC_CFile
 {
-	struct NC_CFile *prev, *next;
+	struct NC_CFile *parent;
+	struct NC_CFile *lchild, *rchild;
 	NC_CFileType file_type;
 	NC_CCompInfo comp_info;
 	struct NC_CFunction *function_list;

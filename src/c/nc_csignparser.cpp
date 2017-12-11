@@ -33,8 +33,286 @@ void  nc_csign_parse(NC_File *fp, char c)
 			tk = nc_ctoken_generate(COP_LPA, NULL,current_lineno);
 			nc_token_stream_add(tk);
 			break;
-			//todo
+		case ')':
+			tk = nc_ctoken_generate(COP_RPA, NULL, current_lineno);
+			nc_token_stream_add(tk);
+			break;
+		case '[':
+			tk = nc_ctoken_generate(COP_LBR, NULL, current_lineno);
+			nc_token_stream_add(tk);
+			break;
+		case ']':
+			tk = nc_ctoken_generate(COP_RBR, NULL, current_lineno);
+			nc_token_stream_add(tk);
+			break;
+		case '{':
+			tk = nc_ctoken_generate(COP_LCB, NULL, current_lineno);
+			nc_token_stream_add(tk);
+			break;
+		case '}':
+			tk = nc_ctoken_generate(COP_RCB, NULL, current_lineno);
+			nc_token_stream_add(tk);
+			break;
+		case ';':
+			tk = nc_ctoken_generate(COP_SEMICOLON, NULL, current_lineno);
+			nc_token_stream_add(tk);
+			break;
+		case ',':
+			tk = nc_ctoken_generate(COP_COMMA, NULL, current_lineno);
+			nc_token_stream_add(tk);
+			break;
+		case ':':
+			tk = nc_ctoken_generate(COP_COLON, NULL, current_lineno);
+			nc_token_stream_add(tk);
+			break;
 		}
-		
+	}
+	else
+	{//¶à×Ö·ûµÄ·ûºÅ
+		char next1, next2;
+		switch (c)
+		{
+		case '+':
+			next1 = nc_getch(fp);
+			if (next1 == '+')
+			{
+				tk = nc_ctoken_generate(COP_PP, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_PE, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_PLUS, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '-':
+			next1 = nc_getch(fp);
+			if (next1 == '-')
+			{
+				tk = nc_ctoken_generate(COP_MM, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_ME, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else if (next1 == '>')
+			{
+				tk = nc_ctoken_generate(COP_POINTERTO, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_MINUS, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '*':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_TE, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_STAR, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '/':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_DE, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_DIVIDE, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '%':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_MODE, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_MOD, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '=':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_EQ, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_ASSIGN, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '!':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_NEQ, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_NOT, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '<':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_LTEQ, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else if(next1=='<')
+			{
+				next2 = nc_getch(fp);
+				if (next2 == '=')
+				{
+					tk = nc_ctoken_generate(COP_SHLE, NULL, current_lineno);
+					nc_token_stream_add(tk);
+				}
+				else
+				{
+					tk = nc_ctoken_generate(COP_SHL, NULL, current_lineno);
+					nc_token_stream_add(tk);
+					nc_ungetch(fp);
+				}
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_LT, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '>':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_RTEQ, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else if (next1 == '>')
+			{
+				next2 = nc_getch(fp);
+				if (next2 == '=')
+				{
+					tk = nc_ctoken_generate(COP_SHRE, NULL, current_lineno);
+					nc_token_stream_add(tk);
+				}
+				else
+				{
+					tk = nc_ctoken_generate(COP_SHR, NULL, current_lineno);
+					nc_token_stream_add(tk);
+					nc_ungetch(fp);
+				}
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_RT, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '.':
+			next1 = nc_getch(fp);
+			if (next1 == '.')
+			{
+				next2 = nc_getch(fp);
+				if (next2 == '.')
+				{
+					tk = nc_ctoken_generate(COP_ELLIPSIS, NULL, current_lineno);
+					nc_token_stream_add(tk);
+				}
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_DOT, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '&':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_BANDE, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else if (next1 == '&')
+			{
+				tk = nc_ctoken_generate(COP_AND, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_BAND, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '|':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_BORE, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else if (next1 == '|')
+			{
+				tk = nc_ctoken_generate(COP_OR, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_BOR, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		case '^':
+			next1 = nc_getch(fp);
+			if (next1 == '=')
+			{
+				tk = nc_ctoken_generate(COP_BXORE, NULL, current_lineno);
+				nc_token_stream_add(tk);
+			}
+			else
+			{
+				tk = nc_ctoken_generate(COP_BXOR, NULL, current_lineno);
+				nc_token_stream_add(tk);
+				nc_ungetch(fp);
+			}
+			break;
+		}
 	}
 }

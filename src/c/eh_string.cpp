@@ -152,3 +152,35 @@ char* eh_string_toasciistring(char *dest, EH_String *str)
 	}
 	return NULL;
 }
+
+int eh_string_ascii_compare(EH_String *str, const char *s)
+{
+	if (str->length != strlen(s))
+		return 0;
+	else
+	{
+		int i = 0;
+		for (i = 0; i < str->length; i++)
+		{
+			if (str->value[i] != (u32)s[i])
+				return 0;
+		}
+	}
+	return 1;
+}
+
+int eh_string_compare(EH_String *str, EH_String *s)
+{
+	if (str->length != s->length)
+		return 0;
+	else
+	{
+		int i = 0;
+		for (i = 0; i < str->length; i++)
+		{
+			if (str->value[i] != s->value[i])
+				return 0;
+		}
+	}
+	return 1;
+}

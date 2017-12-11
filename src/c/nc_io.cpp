@@ -81,6 +81,7 @@ u32 nc_getch(NC_File *fp)
 {
 	if(fp->file_ptr<fp->file->length)
 		return fp->file->value[fp->file_ptr++];
+	fp->file_ptr++;
 	return NC_FILE_EOF;
 }
 

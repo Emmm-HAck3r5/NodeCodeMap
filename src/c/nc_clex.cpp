@@ -15,6 +15,24 @@ EH_String *buffer;
 u32 current_lineno;
 
 const char nc_space[2] = { ' ','\t' };
+const char* nc_ckeyword[NC_KEYWORD_COUNT] = {
+	"auto","short","int","long",
+	"float","double","char","struct",
+	"union","enum","typedef","const",
+	"unsigned","signed","extern","register",
+	"static","volatile","void","if",
+	"else","switch","for","do",
+	"while","goto","continue","break",
+	"default","sizeof","return","typeof",
+	"__stdcall","__cdecl","__fastcall","inline"
+};
+const char* nc_cprekeyword[NC_PREKEYWORD_COUNT] = {
+	"#define","#undef","#include",
+	"#if","#ifdef","#ifndef",
+	"#elif","#endif","#else",
+	"#error","defined","#pragma",
+	"#line"
+};
 void nc_token_stream_init(void)
 {
 	token_stream = nc_ctoken_generate(CTK_NULL, NULL, 0);
@@ -88,6 +106,27 @@ int nc_is_identifier(char c)
 		return false;
 }
 
+int nc_is_keyword(EH_String *str)
+{
+	int i = 0;
+	for (i = 0; i < NC_KEYWORD_COUNT; i++)
+	{
+		if (eh_string_ascii_compare(str, nc_ckeyword[i]))
+			return CKW_AUTO + i;
+	}
+	return 0;
+}
+
+int nc_is_prekeyword(EH_String *str)
+{
+	int i = 0;
+	for (i = 0; i < NC_PREKEYWORD_COUNT; i++)
+	{
+		if (eh_string_ascii_compare(str, nc_cprekeyword[i]))
+			return CPKW_DEFINE + i;
+	}
+	return 0;
+}
 void nc_refresh_buffer(u32 c)
 {
 	eh_string_clear(buffer);
@@ -124,83 +163,13 @@ char nc_parse_tmchar(char c)
 		return -1;
 	}
 }
-int nc_analyze_dep(NC_File *fp, u32 c)
-{
-	static int state = CLEX_NORMAL;
-	int move_cursor = true;
-	u32 token_type;
-	token_type = CTK_NULL;
-	current_token = NULL;
-	if (state = CLEX_NORMAL)
-	{
-		if (c == '#')
-			state = CLEX_PREPROCESS;
-		else if (c == '\n')
-		{
-			current_lineno++;
-			move_cursor = true;
-		}
-		else if (c == '/')
-		{
-			current_lineno--;
-			move_cursor = true;
-		}
-		else
-			state = CLEX_SPACE;
-		nc_refresh_buffer(c);
-	}
-	else if (state == CLEX_SPACE)
-	{
-		if (c=='\n'||c=='/'||c=='#')
-		{
-			state = CLEX_NORMAL;
-			move_cursor = false;
-		}
-	}
-	else if (state == CLEX_PREPROCESS)
-	{
-		//Ô¤´¦Àí
-	}
-	if (token_type != CTK_NULL)
-	{
-		current_token = nc_ctoken_generate((CTokenType)token_type, buffer, current_lineno);
-		nc_token_stream_add(current_token);
-	}
-	return move_cursor;
-}
-
-void nc_analyze_token_dep(NC_File *fp)
-{
-	u32 c;
-	while (!current_token)
-	{
-		c = nc_getch(fp);
-		if (c == EOF)
-		{
-			current_token = nc_ctoken_generate(CTK_ENDSYMBOL, NULL, current_lineno);
-			nc_token_stream_add(current_token);
-			break;
-		}
-		while (!nc_analyze(fp, c))
-		{
-		}
-	}
-}
-
-int nc_analyze_pre(NC_File *fp, u32 c)
-{
-	return 0;
-}
-
-void nc_analyze_token_pre(NC_File *fp)
-{
-
-}
 
 int nc_analyze(NC_File *fp, u32 c)
 {
 	static int state = CLEX_NORMAL;
 	static int is_tmchar = false;
+	static int is_preprocess = false;
+	static int is_line_link = false;
 	static int anno_type = -1;
 	int move_cursor = true;
 	u32 token_type;
@@ -231,15 +200,28 @@ int nc_analyze(NC_File *fp, u32 c)
 		else if (nc_is_in_set(c, nc_space, 2))
 			state = CLEX_SPACE;
 		else if (c == '#')
-			state = CLEX_PREPROCESS;
+		{
+			state = CLEX_IDENTIFIER;
+			move_cursor = true;
+			is_preprocess = true;
+		}
 		else if (c == '\n')
 		{
-			current_lineno++;
+			if (is_line_link == false)
+			{
+				if (is_preprocess == true)//所有的预处理指令不再以\n为结束，统一以;为结束
+				{
+					current_token = nc_ctoken_generate(COP_SEMICOLON, NULL, current_lineno);
+					nc_token_stream_add(current_token);
+					is_preprocess = false;
+				}
+				current_lineno++;
+			}
 			move_cursor = true;
 		}
 		else if (c == '\\')
 		{
-			current_lineno--;
+			is_line_link = true;
 			move_cursor = true;
 		}
 		else if (c == NC_FILE_EOF)
@@ -252,7 +234,7 @@ int nc_analyze(NC_File *fp, u32 c)
 	}
 	else if (state == CLEX_IDENTIFIER)
 	{
-		if (nc_is_identifier(c))
+		if (nc_is_identifier(c)||c=='#')
 			eh_string_appendc(buffer, (u32)c, 1);
 		else
 		{
@@ -281,7 +263,13 @@ int nc_analyze(NC_File *fp, u32 c)
 			}
 		}
 		nc_ungetch(fp);
-		nc_csign_parse(fp, c);
+		if(state==CLEX_SIGN)
+		{
+			nc_csign_parse(fp, c);
+			token_type = CTK_NULL;
+			state = CLEX_NORMAL;
+			move_cursor = true;
+		}
 	}
 	else if (state == CLEX_STRING)
 	{
@@ -364,14 +352,24 @@ int nc_analyze(NC_File *fp, u32 c)
 			move_cursor = false;
 		}
 	}
-	else if (state == CLEX_PREPROCESS)
-	{
-		//预处理
-	}
 	if (token_type != CTK_NULL)
 	{
-		current_token = nc_ctoken_generate((CTokenType)token_type, buffer, current_lineno);
-		nc_token_stream_add(current_token);
+		int keyword_name = 0;
+		if (token_type == CTK_IDENT&&(keyword_name=nc_is_keyword(buffer))!=0)
+		{
+			current_token = nc_ctoken_generate((CTokenType)keyword_name, NULL, current_lineno);
+			nc_token_stream_add(current_token);
+		}
+		else if (token_type == CTK_IDENT && (keyword_name = nc_is_prekeyword(buffer)) != 0)
+		{
+			current_token = nc_ctoken_generate((CTokenType)keyword_name, NULL, current_lineno);
+			nc_token_stream_add(current_token);
+		}
+		else
+		{
+			current_token = nc_ctoken_generate((CTokenType)token_type, buffer, current_lineno);
+			nc_token_stream_add(current_token);
+		}
 		if (token_type == CTK_ANNO)
 			anno_type = -1;//复位
 	}

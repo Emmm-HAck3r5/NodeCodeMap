@@ -61,6 +61,8 @@ typedef enum CTokenType
 	COP_SEMICOLON, // ;
 	COP_COMMA,	// ,
 	COP_ELLIPSIS, // ...
+	COP_POINTERTO,// ->
+	COP_COLON,	// :
 	//¹Ø¼ü×Ö
 	CKW_AUTO,
 	CKW_SHORT,

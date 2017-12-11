@@ -7,7 +7,6 @@
  * Last Modified: 2017-12-10 18:06:18
  * Modified By: EasyAI ( easyai@outlook.com )
  */
-
 #ifndef NC_CLEX_H
 #define NC_CLEX_H
 
@@ -15,6 +14,9 @@
 #include "eh_dlist.h"
 #include "nc_io.h"
 #include "nc_csignparser.h"
+
+#define NC_KEYWORD_COUNT 36
+#define NC_PREKEYWORD_COUNT 13
 extern CToken *token_stream;
 extern EH_String *buffer;
 extern u32 current_lineno;
@@ -30,12 +32,10 @@ void nc_lex_open(void);
 void nc_lex_close(void);
 int nc_is_in_set(char c, const char *set, int set_length);
 int nc_is_identifier(char c);
+int nc_is_keyword(EH_String *str);
+int nc_is_prekeyword(EH_String *str);
 void nc_refresh_buffer(u32 c);
 char nc_parse_tmchar(char c);
-int nc_analyze_dep(NC_File *fp, u32 c);
-void nc_analyze_token_dep(NC_File *fp);
-int nc_analyze_pre(NC_File *fp, u32 c);
-void nc_analyze_token_pre(NC_File *fp);
 int nc_analyze(NC_File *fp, u32 c);
 void nc_analyze_token(NC_File *fp);
 #endif

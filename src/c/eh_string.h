@@ -38,6 +38,8 @@ typedef struct EH_String
 	int eh_string_copy(EH_String *dest, const EH_String *src);
 	void eh_string_reverse(EH_String *str);
 	char* eh_string_toasciistring(char *dest, EH_String *str);
+	int eh_string_ascii_compare(EH_String *str, const char *s);
+	int eh_string_compare(EH_String *str, EH_String *s);
 //#ifdef __cplusplus
 //}
 //#endif

@@ -4,7 +4,7 @@ const url = require('url');
 
 // 將這個 window 物件記在全域變數裡。
 // 如果你不這麼做，這個視窗在 JavaScript 物件被 GC 後就會被自動關閉。
-let win
+let win;
 
 function createWindow () {
   // 建立瀏覽器視窗。
@@ -36,7 +36,7 @@ app.on('ready', createWindow);
 app.on('window-all-closed', () => {
   // 在 macOS 裡，普遍的作法是將應用程式及選單列繼續留著，直到使用者按了 Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
 });
 
@@ -44,6 +44,6 @@ app.on('activate', () => {
   // 在 macOS 裡，一般會在使用者按了 Dock 圖示且沒有其他視窗開啟的情況下，
   // 重新在應用程式裡建立視窗。
   if (win === null) {
-    createWindow()
+    createWindow();
   }
 });

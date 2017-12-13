@@ -1,0 +1,25 @@
+{
+    "nodes":[
+        {"id": "main", "type": "function"},
+        {"id": "ptr", "type": "pointer"},
+        {"id": "cout", "type": "function"},
+        {"id": "cin", "type": "function"},
+        {"id": "counter", "type": "int"},
+        {"id": "sortedStr", "type": "char"},
+        {"id": "sort", "type":"function"},
+        {"id": "max", "type": "int"},
+        {"id": "i", "type": "int"}
+    ],
+    "links":[
+        {"source": "main", "target": "cout"},
+        {"source": "main", "target": "cin"},
+        {"source": "main", "target": "ptr"},
+        {"source": "main", "target": "sortedStr"},
+        {"source": "main", "target": "counter"},
+        {"source": "main", "target": "sortedStr"},
+        {"source": "main", "target": "sort"},
+        {"source": "ptr", "target": "sortedStr"},
+        {"source": "sort", "target": "max"},
+        {"source": "sort", "target": "i"}
+    ]
+}

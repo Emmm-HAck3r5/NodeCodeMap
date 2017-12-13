@@ -8,7 +8,9 @@ let win;
 
 function createWindow () {
   // 建立瀏覽器視窗。
-  win = new BrowserWindow({width: 800, height: 600});
+  win = new BrowserWindow({
+    fullscreen: true
+  });
 
   // 並載入應用程式的 index.html。
   win.loadURL(url.format({

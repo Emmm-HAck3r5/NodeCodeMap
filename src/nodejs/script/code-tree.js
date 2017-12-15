@@ -1,4 +1,3 @@
-
 let WIDTH = Math.min(window.screen.width, document.documentElement.clientWidth);
 let HEIGHT = Math.min(window.screen.height, document.documentElement.clientHeight) - 20; // give up thinking.jpg
 
@@ -8,10 +7,10 @@ let svg = d3.select('svg')
 
 let simulation = d3.forceSimulation()
     .force('charge', d3.forceManyBody())
-    .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
-    .force('collide', d3.forceCollide(30));
+    .force('center', d3.forceCenter(WIDTH/2, HEIGHT/2))
+    .force('collide', d3.forceCollide(40));
 
-d3.json('../public/codetree-test.json', treeInit);
+d3.json('../public/fortest.json', treeInit);
 
 // initialize code tree
 function treeInit(err, data){
@@ -32,6 +31,7 @@ function treeInit(err, data){
         .data(data.nodes)
         .enter()
         .append('circle')
+            .attr('id', (d) => `NODE-${d.id}`)
             .attr('r', () => 30);
     let codeNames = svg.append('g')
         .classed('codeNames', true)
@@ -41,7 +41,7 @@ function treeInit(err, data){
         .append('text')
             .attr('id', (d) => `TEXT-${d.id}`)
             .text((d) => d.id)
-            .attr('text-anchor', 'middle')
+            .attr('text-anchor', 'middle');
 
     setDataToSimulation(data, links, nodes, codeNames);
 
@@ -52,13 +52,13 @@ function treeInit(err, data){
 function addEventListenerToAllElements(links, nodes, codeNames){
     // There is no event to links
     // ...
-    
-    nodes.on('dblclick', centralize)
+
+    nodes
         .call(d3.drag()
             .on('start', drags)
             .on('drag', dragging)
             .on('end', dragged));
-    codeNames.on('dblclick', centralize)
+    codeNames
         .call(d3.drag()
             .on('start', drags)
             .on('drag', dragging)
@@ -116,11 +116,6 @@ function zoomTransition(selection, traSTY){
 // get Text Element's height
 function getFontSize(id){
     return document.getElementById(`TEXT-${id}`).getBBox().height;
-}
-
-// make node move to center
-function centralize(d){
-    console.log("uncompleted");
 }
 
 // drag listener

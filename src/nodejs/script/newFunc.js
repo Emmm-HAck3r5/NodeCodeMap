@@ -22,7 +22,6 @@ let dLinks, dNodes;
 d3.json('../public/fortest.json', treeInit);
 
 function dblclicked(){
-    console.log('DBLCLICK');
     svg.selectAll('line')
         .attr('visibility', 'visible');
     svg.selectAll('text')
@@ -87,9 +86,9 @@ function treeInit(err, data){
                 .attr('x', (d) => d.x + d.vx * 3)
                 .attr('y', (d) => (d.y + d.vy * 3 + getFontSize(d.id) / 4));
         });
-    console.log('here');
-    addEventListenerToSomeEle();
-    
+    addDragEeventListener(nodes, codeNames);
+    addZoomEventListener(nodes, codeNames, links);
+
     dLinks = data.links;
     dNodes = dataNodes;
 }
@@ -125,6 +124,19 @@ function textToggle(){
     }
     return codeNameToggleSwitch;
 }
+// 
+function addZoomEventListener(nodes, codeNames, links){
+    svg.call(d3.zoom()
+        .scaleExtent([0.1,10])
+        .on('zoom', () => {
+            const t = d3.event.transform; // t is d3.event.transform for short
+            const transformSTYLE = `translate(${t.x}, ${t.y}) scale(${t.k})`;
+            for(const selection of [nodes, codeNames, links]){
+                zoomTransition(selection, transformSTYLE);
+            }
+        }))
+        .on('dblclick.zoom', null);
+}
 
 // the way of transition during zooming
 function zoomTransition(selection, traSTY){
@@ -141,30 +153,17 @@ function getFontSize(id){
 }
 
 // // each event listeners
-function addEventListenerToSomeEle(){
-    console.log('uaua');
-    svg.selectAll('circle')
+function addDragEeventListener(nodes, codeNames){
+    nodes
         .call(d3.drag()
             .on('start', drags)
             .on('drag', dragging)
             .on('end', dragged));
-    svg.selectAll('text')
+    codeNames
         .call(d3.drag()
             .on('start', drags)
             .on('drag', dragging)
             .on('end', dragged));
-    // svg.call(d3.zoom()
-    //         .scaleExtent([0.5,10])
-    //         .on('zoom', () => {
-    //             const t = d3.event.transform; // t is d3.event.transform for short
-    //             const transformSTYLE = `translate(${t.x}, ${t.y}) scale(${t.k})`;
-    //             for(const selection of [svg.select('circle'),
-    //                                     svg.select('text'), 
-    //                                     svg.select('line')]){
-    //                 zoomTransition(selection, transformSTYLE);
-    //             }
-    //         }))
-    //     .on('dblclick.zoom', null);
 }
 
 

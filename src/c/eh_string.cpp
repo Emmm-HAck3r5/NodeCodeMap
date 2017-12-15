@@ -216,8 +216,8 @@ int eh_string_findstr(EH_String *src, EH_String *tar)//返回tar在src中第一�
         }
         if (j==tar->length-1)
         {
-            return i+2-tar->length;
+            return i+1-tar->length;
         }
     }
-    return 0;
+    return -1;
 }

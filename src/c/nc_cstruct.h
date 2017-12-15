@@ -30,12 +30,18 @@ typedef struct NC_CFile
 	struct NC_CFile *lchild, *rchild;
 	NC_CFileType file_type;
 	struct NC_CCompInfo *comp_info;
-	CToken *token_stream;
+	NC_CTokenStream *token_stream;
 	struct NC_CFunction *function_list;
 	struct NC_CVariable *var_list;
 	struct NC_CMacro *macro_list;
 	struct NC_CType *type_list;
 }NC_CFile;
+
+typedef struct NC_CTokenStream
+{
+	CToken *stream;
+	CToken *pos;
+}NC_CTokenStream;;
 
 typedef struct NC_CCompInfo
 {

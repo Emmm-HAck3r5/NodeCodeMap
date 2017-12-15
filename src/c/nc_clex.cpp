@@ -49,7 +49,7 @@ void nc_lex_open(NC_File *fp)
 {
 	NC_CFile *newfile = nc_cfile_init(fp);
 	__EH_DLIST_ADD_TAIL(file_list, rchild, lchild, newfile);
-	token_stream = newfile->token_stream;
+	token_stream = newfile->token_stream->stream;
 	current_lineno = 0;
 	current_token = NULL;
 	if (buffer == NULL)
@@ -374,4 +374,28 @@ void nc_analyze_token(NC_File *fp)
 		while (!nc_analyze(fp,c))
 		{ }
 	}
+}
+
+CToken* nc_lex_get_token(NC_CTokenStream *ts)
+{
+	if (__EH_DLIST_EMPTY(ts->stream, next, prev))
+		return NULL;
+	else
+	{
+		if (ts->pos == ts->stream)
+		{
+			ts->pos = ts->stream->next->next;
+			return ts->stream->next;
+		}
+		else
+		{
+			ts->pos = ts->pos->next;
+			return ts->pos->prev;
+		}
+	}
+}
+
+void nc_lex_unget_token(NC_CTokenStream *ts)
+{
+	ts->pos = ts->pos->prev;
 }

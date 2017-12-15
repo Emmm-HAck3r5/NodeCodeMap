@@ -8,10 +8,11 @@ NC_CFile* nc_cfile_init(NC_File *fp)
 	file->type_list = (NC_CType*)malloc(sizeof(NC_CType));
 	file->var_list = (NC_CVariable*)malloc(sizeof(NC_CVariable));
 	file->comp_info = nc_ccompinfo_init();
-	
-	file->token_stream = nc_ctoken_generate(CTK_NULL, NULL, 0);
+	file->token_stream = (NC_CTokenStream*)malloc(sizeof(NC_CTokenStream));
+	file->token_stream->stream = nc_ctoken_generate(CTK_NULL, NULL, 0);
+	file->token_stream->pos = file->token_stream->stream;
 	file->parent = NULL;
-	__EH_DLIST_INIT(file->token_stream, next, prev);
+	__EH_DLIST_INIT(file->token_stream->stream, next, prev);
 	__EH_DLIST_INIT(file->var_list, next, prev);
 	__EH_DLIST_INIT(file->type_list, next, prev);
 	__EH_DLIST_INIT(file->macro_list, next, prev);

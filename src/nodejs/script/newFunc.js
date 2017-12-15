@@ -4,6 +4,7 @@ const centerX = WIDTH / 2;
 const centerY  = HEIGHT / 2;
 
 let codeNameToggleSwitch = false;
+let toggle = true;
 
 let svg = d3.select('svg')
     .attr('width', WIDTH)
@@ -22,11 +23,17 @@ let dLinks, dNodes;
 d3.json('../public/fortest.json', treeInit);
 
 function dblclicked(){
-    svg.selectAll('line')
-        .attr('visibility', 'visible');
-    svg.selectAll('text')
-        .attr('visibility', 'visible');
-    setDataToSimulation();
+    const nodes = svg.selectAll('circle');
+    const links = svg.selectAll('line');
+    const codeNames = svg.selectAll('text');
+    
+    if (toggle ){
+        setNetSimulation(nodes, links, codeNames);
+        toggle = false;
+    } else{
+        removeNetSimulation(nodes, links, codeNames);
+        toggle = true;
+    }
 }
 
 function treeInit(err, data){
@@ -168,7 +175,9 @@ function addDragEeventListener(nodes, codeNames){
 
 
 // set data (nodes, links) to simulation
-function setDataToSimulation(){
+function setNetSimulation(nodes, links, codeNames){
+    links.attr('visibility', 'visible');
+    codeNames.attr('visibility', 'visible');
     simulation
         .force('charge', d3.forceManyBody())
         .force('link', d3.forceLink()
@@ -180,17 +189,36 @@ function setDataToSimulation(){
     
     simulation.nodes(dNodes).alphaDecay(0)
         .on('tick', () => {
-            svg.selectAll('circle')
+            nodes
                 .attr('cx', d => d.x)
                 .attr('cy', d => d.y);
-            svg.selectAll('line')
+            links
                 .attr('x1', (d) => d.source.x)
                 .attr('y1', (d) => d.source.y)
                 .attr('x2', (d) => d.target.x)
                 .attr('y2', (d) => d.target.y);
-            svg.selectAll('text')
+            codeNames
                 .attr('x', (d) => d.x)
                 .attr('y', (d) => d.y + getFontSize(d.id) / 4);
         });
     return simulation;
+}
+function removeNetSimulation(nodes, links, codeNames){
+    links.attr('visibility', 'hidden');
+    codeNames.attr('visibility', 'hidden');
+    simulation
+        .force('link', null)
+        .force('charge', d3.forceManyBody().strength(1.2))
+        .force('center', d3.forceCenter(centerX, centerY))
+        .force('collide', d3.forceCollide(1))
+        .velocityDecay(0);
+    simulation.nodes(dNodes).alphaDecay(0)
+        .on('tick', () => {
+            nodes
+                .attr('cx', (d) => d.x + d.vx * 3)
+                .attr('cy', (d) => (d.y + d.vy * 3));
+            codeNames
+                .attr('x', (d) => d.x + d.vx * 3)
+                .attr('y', (d) => (d.y + d.vy * 3 + getFontSize(d.id) / 4));
+        });
 }

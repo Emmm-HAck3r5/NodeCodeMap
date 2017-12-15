@@ -13,6 +13,7 @@
 CToken *token_stream;
 EH_String *buffer;
 u32 current_lineno;
+NC_CFile *file_list;
 
 const char nc_space[2] = { ' ','\t' };
 const char* nc_ckeyword[NC_KEYWORD_COUNT] = {
@@ -33,62 +34,49 @@ const char* nc_cprekeyword[NC_PREKEYWORD_COUNT] = {
 	"#error","defined","#pragma",
 	"#line"
 };
-void nc_token_stream_init(void)
-{
-	token_stream = nc_ctoken_generate(CTK_NULL, NULL, 0);
-	__EH_DLIST_INIT(token_stream, next, prev);
-}
 
 void nc_token_stream_add(CToken *tk)
 {
 	current_token = tk;
 	__EH_DLIST_ADD_TAIL(token_stream, next, prev, tk);
 }
-void nc_lex_open(void)
+void nc_lex_init(void)
 {
-	if (token_stream)
-	{
-		CToken *tmp;
-		CToken *tk=token_stream->next->next;
-		do
-		{
-			tmp = tk->prev;
-			__EH_DLIST_DELETE(token_stream, tk->prev, next, prev);
-			nc_ctoken_destroy(tmp);
-			tk = tk->next;
-		} while (tk->prev != token_stream);
-	}
-	else
-	{
-		nc_token_stream_init();
-		current_lineno = 0;
-		current_token = NULL;
-	}
+	file_list = (NC_CFile*)malloc(sizeof(NC_CFile));
+	__EH_DLIST_INIT(file_list, rchild, lchild);
+}
+void nc_lex_open(NC_File *fp)
+{
+	NC_CFile *newfile = nc_cfile_init(fp);
+	__EH_DLIST_ADD_TAIL(file_list, rchild, lchild, newfile);
+	token_stream = newfile->token_stream;
+	current_lineno = 0;
+	current_token = NULL;
 	if (buffer == NULL)
 	{
 		buffer = eh_string_init(256);
 	}
 }
-void nc_lex_close(void)
-{
-	if (token_stream)
-	{
-		CToken *tmp;
-		CToken *tk = token_stream->next->next;
-		do
-		{
-			tmp = tk->prev;
-			__EH_DLIST_DELETE(token_stream, tk->prev, next, prev);
-			nc_ctoken_destroy(tmp);
-			tk = tk->next;
-		} while (tk->prev != token_stream);
-		nc_ctoken_destroy(token_stream);
-		token_stream = NULL;
-	}
-	current_lineno = 0;
-	current_token = NULL;
-	free(buffer);
-}
+//void nc_lex_close(void)
+//{
+//	if (token_stream)
+//	{
+//		CToken *tmp;
+//		CToken *tk = token_stream->next->next;
+//		do
+//		{
+//			tmp = tk->prev;
+//			__EH_DLIST_DELETE(token_stream, tk->prev, next, prev);
+//			nc_ctoken_destroy(tmp);
+//			tk = tk->next;
+//		} while (tk->prev != token_stream);
+//		nc_ctoken_destroy(token_stream);
+//		token_stream = NULL;
+//	}
+//	current_lineno = 0;
+//	current_token = NULL;
+//	free(buffer);
+//}
 int nc_is_in_set(char c, const char *set, int set_length)
 {
 	int i;
@@ -379,6 +367,7 @@ int nc_analyze(NC_File *fp, u32 c)
 void nc_analyze_token(NC_File *fp)
 {
 	u32 c;
+	nc_lex_open(fp);
 	while (token_stream->prev->token_type!=CTK_ENDSYMBOL)
 	{
 		c = nc_getch(fp);

@@ -14,22 +14,23 @@
 #include "eh_dlist.h"
 #include "nc_io.h"
 #include "nc_csignparser.h"
+#include "nc_cstruct.h"
 
 #define NC_KEYWORD_COUNT 36
 #define NC_PREKEYWORD_COUNT 13
-extern CToken *token_stream;
+extern NC_CFile *file_list;
 extern EH_String *buffer;
 extern u32 current_lineno;
 typedef enum NC_CLexState
 {
 	CLEX_NORMAL,CLEX_IDENTIFIER,CLEX_SIGN,
 	CLEX_STRING,CLEX_ANNOATAION,CLEX_SPACE,
-	CLEX_NUM,CLEX_PREPROCESS
+	CLEX_NUM
 }NC_CLexState;
-void nc_token_stream_init(void);
 void nc_token_stream_add(CToken *tk);
-void nc_lex_open(void);
-void nc_lex_close(void);
+void nc_lex_init(void);
+void nc_lex_open(NC_File *fp);
+//void nc_lex_close(void);
 int nc_is_in_set(char c, const char *set, int set_length);
 int nc_is_identifier(char c);
 int nc_is_keyword(EH_String *str);

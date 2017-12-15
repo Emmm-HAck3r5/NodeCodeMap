@@ -1,11 +1,12 @@
 /*
  * File: eh_string.c
- * Author: EasyAI
- * Email: easyai@outlook.com
+ * Author: EasyAI & Forewing
+ * Email: easyai@outlook.com & jujianai@hotmail.com
  * Created Date: 2017-12-08 10:18:42
  * ------
- * Last Modified: 2017-12-08 10:18:43
- * Modified By: EasyAI ( easyai@outlook.com )
+ * Last Modified: 2017-12-14 01:00:40
+ * Modified By: Forewing (jujianai@hotmail.com)
+ * Changelog: Add kmp(eh_string_findstr)
  */
 #include "eh_string.h"
 
@@ -183,4 +184,40 @@ int eh_string_compare(EH_String *str, EH_String *s)
 		}
 	}
 	return 1;
+}
+
+int eh_string_findstr(EH_String *src, EH_String *tar)//返回tar在src中第一次出现的位置(从1开始记)， 为0则未出现
+{
+    int p[10000]={},i=0,j=0;
+    p[0]=-1;
+    j=-1;
+    for (i=1;i<=tar->length;i++)
+    {
+        while ((j>0)&&(tar->value[j+1]!=tar->value[i]))
+        {
+            j=p[j];
+        }
+        if (tar->value[j+1]==tar->value[i])
+        {
+            j++;
+        }
+        p[i]=j;
+    }
+    j=-1;
+    for (i=0;i<src->length;i++)
+    {
+        while ((j>0)&&(tar->value[j+1]!=src->value[i]))
+        {
+            j=p[j];
+        }
+        if (tar->value[j+1]==src->value[i])
+        {
+            j++;
+        }
+        if (j==tar->length-1)
+        {
+            return i+1-tar->length;
+        }
+    }
+    return -1;
 }

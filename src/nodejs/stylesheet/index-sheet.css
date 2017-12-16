@@ -13,7 +13,8 @@ body {
 svg {
   float: left; }
 
-.codeText {
+.codePage {
+  display: none;
   float: left;
   height: 100%;
   width: 49%; }

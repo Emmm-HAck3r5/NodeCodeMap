@@ -4,6 +4,11 @@ const centerX = WIDTH / 2;
 const centerY  = HEIGHT / 2;
 
 let netToggle = true;
+let transformRecord = {
+    x: 0,
+    y: 0
+};
+
 
 let svg = d3.select('svg')
     .attr('width', WIDTH)
@@ -132,6 +137,8 @@ function addZoomEventListener(nodes, codeNames, links){
             for(const selection of [nodes, codeNames, links]){
                 zoomTransition(selection, transformSTYLE);
             }
+            transformRecord.x = t.x;
+            transformRecord.y = t.y;
         }))
         .on('dblclick.zoom', null)
         .on('dblclick.tap', null);
@@ -166,29 +173,29 @@ function addDragEeventListener(nodes, codeNames){
 }
 // add click event listeners
 function addClickEventListener(nodes, codeNames, links){
-    nodes.on('click', (d) => {
-        const centerVector = {
-            x: centerX - d.x,
-            y: centerY - d.y
-        };
-        const transformSTYLE = `translate( ${-WIDTH/4 + centerVector.x}, ${centerVector.y})`;
-        for(const selection of [nodes, codeNames, links]){
-            zoomTransition(selection, transformSTYLE);
-        }
-        svg.attr('width', WIDTH / 2);
-    });
-    codeNames.on('click', (d) => {
-        const centerVector = {
-            x: centerX - d.x,
-            y: centerY - d.y
-        };
-        const transformSTYLE = `translate( ${-WIDTH/4 + centerVector.x}, ${centerVector.y})`;
-        for(const selection of [nodes, codeNames, links]){
-            zoomTransition(selection, transformSTYLE);
-        }
-        svg.attr('width', WIDTH / 2);
-    });
+    nodes.on('click', clicked);
+    codeNames.on('click', clicked);
 }
+
+// click event for nodes (and codeNames)
+function clicked(data){
+    const nodes = svg.select('.nodes'),
+          links = svg.select('.links'),
+          codeNames = svg.select('.codeNames');
+    const centerVector = {
+        x: centerX - data.x,
+        y: centerY - data.y
+    };
+    const transX = -WIDTH/4 + centerVector.x - transformRecord.x,
+          transY = centerVector.y - transformRecord.y;
+    const transformSTYLE = `translate( ${transX}, ${transY})`;
+    for(const selection of [nodes, codeNames, links]){
+        zoomTransition(selection, transformSTYLE);
+    }
+    svg.attr('width', WIDTH / 2);
+    d3.select('.codePage').attr('style', 'display: inline');
+}
+
 
 // set data (nodes, links) to simulation
 function setNetSimulation(nodes, links, codeNames){

@@ -9,7 +9,8 @@ let win;
 function createWindow () {
   // 建立瀏覽器視窗。
   win = new BrowserWindow({
-    fullscreen: true
+    fullscreen: true,
+    frame: false
   });
 
   // 並載入應用程式的 index.html。

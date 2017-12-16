@@ -1,10 +1,10 @@
 const WIDTH = Math.min(window.screen.width, document.documentElement.clientWidth);
-const HEIGHT = Math.min(window.screen.height, document.documentElement.clientHeight) - 20; // give up thinking.jpg
+const HEIGHT = Math.min(window.screen.height, document.documentElement.clientHeight) - 5; // give up thinking.jpg
 const centerX = WIDTH / 2;
 const centerY  = HEIGHT / 2;
 
-let codeNameToggleSwitch = false;
-let toggle = true;
+let netToggle = true;
+
 
 let svg = d3.select('svg')
     .attr('width', WIDTH)
@@ -27,12 +27,12 @@ function dblclicked(){
     const links = svg.selectAll('line');
     const codeNames = svg.selectAll('text');
     
-    if (toggle ){
+    if (netToggle){
         setNetSimulation(nodes, links, codeNames);
-        toggle = false;
+        netToggle = false;
     } else{
         removeNetSimulation(nodes, links, codeNames);
-        toggle = true;
+        netToggle = true;
     }
 }
 
@@ -95,6 +95,7 @@ function treeInit(err, data){
         });
     addDragEeventListener(nodes, codeNames);
     addZoomEventListener(nodes, codeNames, links);
+    addClickEventListener(nodes, codeNames, links);
 
     dLinks = data.links;
     dNodes = dataNodes;
@@ -122,16 +123,7 @@ function dragged(d){
     d.fy = null;
 }
 
-// text toggle
-function textToggle(){
-    if(codeNameToggleSwitch === false){
-        codeNameToggleSwitch = true;
-    }else{
-        codeNameToggleSwitch = false;
-    }
-    return codeNameToggleSwitch;
-}
-// 
+// add zoom event
 function addZoomEventListener(nodes, codeNames, links){
     svg.call(d3.zoom()
         .scaleExtent([0.1,10])
@@ -142,7 +134,8 @@ function addZoomEventListener(nodes, codeNames, links){
                 zoomTransition(selection, transformSTYLE);
             }
         }))
-        .on('dblclick.zoom', null);
+        .on('dblclick.zoom', null)
+        .on('dblclick.tap', null);
 }
 
 // the way of transition during zooming
@@ -159,7 +152,7 @@ function getFontSize(id){
     return document.getElementById(`TEXT-${id}`).getBBox().height;
 }
 
-// // each event listeners
+// add drag event on nodes (and text on nodes)
 function addDragEeventListener(nodes, codeNames){
     nodes
         .call(d3.drag()
@@ -172,7 +165,32 @@ function addDragEeventListener(nodes, codeNames){
             .on('drag', dragging)
             .on('end', dragged));
 }
-
+// add click event listeners
+function addClickEventListener(nodes, codeNames, links){
+    nodes.on('click', (d) => {
+        const centerVector = {
+            x: centerX - d.x,
+            y: centerY - d.y
+        };
+        // // DEBUGGING
+        // console.log('NODE CLICK!!');
+        // console.log(`
+        // centerX: ${centerX}, centerY: ${centerY}
+        // nodeX: ${d.x}, nodeY: ${d.x}
+        // vector:( ${centerX - d.x}, ${centerY - d.y})
+        // `);
+        const transformSTYLE = `translate( ${-WIDTH/4 + centerVector.x}, ${centerVector.y})`;
+        for(const selection of [nodes, codeNames, links]){
+            zoomTransition(selection, transformSTYLE);
+        }
+    });
+    codeNames.on('click', () => {
+        const transformSTYLE = `translate( ${-WIDTH/4 + centerVector.x}, ${centerVector.y})`;
+        for(const selection of [nodes, codeNames, links]){
+            zoomTransition(selection, transformSTYLE);
+        }
+    });
+}
 
 // set data (nodes, links) to simulation
 function setNetSimulation(nodes, links, codeNames){

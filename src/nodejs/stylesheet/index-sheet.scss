@@ -10,5 +10,7 @@ svg{
     height: 100%;
 }
 .codeNames text{
+    user-select: none;
+    -webkit-user-select: none;
     font-family: "Microsoft JhengHei"
 }

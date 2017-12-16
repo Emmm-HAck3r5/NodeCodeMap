@@ -5,7 +5,6 @@ const centerY  = HEIGHT / 2;
 
 let netToggle = true;
 
-
 let svg = d3.select('svg')
     .attr('width', WIDTH)
     .attr('height', HEIGHT)
@@ -172,23 +171,22 @@ function addClickEventListener(nodes, codeNames, links){
             x: centerX - d.x,
             y: centerY - d.y
         };
-        // // DEBUGGING
-        // console.log('NODE CLICK!!');
-        // console.log(`
-        // centerX: ${centerX}, centerY: ${centerY}
-        // nodeX: ${d.x}, nodeY: ${d.x}
-        // vector:( ${centerX - d.x}, ${centerY - d.y})
-        // `);
         const transformSTYLE = `translate( ${-WIDTH/4 + centerVector.x}, ${centerVector.y})`;
         for(const selection of [nodes, codeNames, links]){
             zoomTransition(selection, transformSTYLE);
         }
+        svg.attr('width', WIDTH / 2);
     });
-    codeNames.on('click', () => {
+    codeNames.on('click', (d) => {
+        const centerVector = {
+            x: centerX - d.x,
+            y: centerY - d.y
+        };
         const transformSTYLE = `translate( ${-WIDTH/4 + centerVector.x}, ${centerVector.y})`;
         for(const selection of [nodes, codeNames, links]){
             zoomTransition(selection, transformSTYLE);
         }
+        svg.attr('width', WIDTH / 2);
     });
 }
 
@@ -203,7 +201,7 @@ function setNetSimulation(nodes, links, codeNames){
             .id( (d) => d.id )
             .distance(75))
         .force('collide', d3.forceCollide(10))
-        .velocityDecay(0.05);
+        .velocityDecay(0.2);
     
     simulation.nodes(dNodes).alphaDecay(0)
         .on('tick', () => {

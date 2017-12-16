@@ -194,6 +194,8 @@ function clicked(data){
     }
     svg.attr('width', WIDTH / 2);
     d3.select('.codePage').attr('style', 'display: inline');
+
+    CodePage.loadCode(undefined, data.id);
 }
 
 

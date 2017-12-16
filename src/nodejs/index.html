@@ -5,26 +5,23 @@
     <title>NodeCodeMap</title>
     <link rel="stylesheet" type="text/css" href="stylesheet/index-sheet.css"/>
     <link rel="stylesheet" type="text/css" href="stylesheet/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="stylesheet/prettify.css">
     <script>
       window.$ = window.jQuery = require('jquery');
-      require('bootstrap');
     </script>
     <script type="text/javascript" src="script/d3.js"></script>
+    <script type="text/javascript" src="script/bootstrap.js"></script>
+    <script type="text/javascript" src="script/prettify.js"></script>
+
   </head>
-  <body>
+  <body onload="PR.prettyPrint()">
     <svg></svg>
     <div class='codePage'>
-      <ul class="nav nav-tabs" role="tablist">
+      <ul class="nav nav-tabs codeTab" role="tablist">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
-        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
-        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
-        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
       </ul>
-      <div class="tab-content">
+      <div class="tab-content codeContent">
         <div role="tabpanel" class="tab-pane fade in active" id="home">i'm home</div>
-        <div role="tabpanel" class="tab-pane fade" id="profile">i'm profile</div>
-        <div role="tabpanel" class="tab-pane fade" id="messages">i'm messages</div>
-        <div role="tabpanel" class="tab-pane fade" id="settings">i'm setting</div>
       </div>
     </div>  
   </body>

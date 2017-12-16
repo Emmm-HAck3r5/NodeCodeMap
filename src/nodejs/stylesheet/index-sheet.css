@@ -1,5 +1,6 @@
 body {
-  background-color: white; }
+  background-color: white;
+  font-family: "Microsoft JhengHei"; }
 
 .links line {
   stroke: black;
@@ -7,8 +8,7 @@ body {
 
 .codeNames text {
   user-select: none;
-  -webkit-user-select: none;
-  font-family: "Microsoft JhengHei"; }
+  -webkit-user-select: none; }
 
 svg {
   float: left; }

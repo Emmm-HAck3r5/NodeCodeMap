@@ -1,7 +1,7 @@
 /*
  * File: eh_string.h
- * Author: EasyAI 
- * Email: easyai@outlook.com 
+ * Author: EasyAI & Forewing
+ * Email: easyai@outlook.com & jujianai@hotmail.com
  * Created Date: 2017-12-08 10:18:35
  * ------
  * Last Modified: 2017-12-14 01:00:40

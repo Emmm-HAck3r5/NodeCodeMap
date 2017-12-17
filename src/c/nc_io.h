@@ -4,8 +4,8 @@
  * Email: easyai@outlook.com
  * Created Date: 2017-12-09 18:55:00
  * ------
- * Last Modified: 2017-12-17 19:06:08
- * Modified By: Forewing (jujianai@hotmail.com)
+ * Last Modified: 2017-12-09 18:55:01
+ * Modified By: EasyAI ( easyai@outlook.com )
  */
 #ifndef NC_IO_H
 #define NC_IO_H

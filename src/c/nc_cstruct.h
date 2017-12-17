@@ -4,8 +4,8 @@
  * Email: easyai@outlook.com
  * Created Date: 2017-12-08 19:09:49
  * ------
- * Last Modified: 2017-12-17 19:06:08
- * Modified By: Forewing (jujianai@hotmail.com)
+ * Last Modified: 2017-12-10 18:07:46
+ * Modified By: EasyAI ( easyai@outlook.com )
  */
 #ifndef NC_CSTRUCT_H
 #define NC_CSTRUCT_H
@@ -52,7 +52,7 @@ typedef struct NC_CCompInfo
 	char *file_name;
 	EH_String *decl;
 	u32 lineno;
-	u32 pos;//ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½È¡declï¿½ï¿½ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ftellï¿½ï¿½ï¿½ï¿½Öµ
+	u32 pos;//¸Ã±äÁ¿ÓÃÓÚ»ñÈ¡decl£¬´æ´¢µÄÊÇftell·µ»ØÖµ
 }NC_CFileInfo;
 typedef enum NC_CTypeType
 {
@@ -80,7 +80,7 @@ typedef struct NC_CType
 	u8 type_type;
 	EH_String *type_name;
 	NC_CCompInfo *comp_info;
-	u8 type_modifier;//ï¿½Ë´ï¿½constÖ¸ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½const
+	u8 type_modifier;//´Ë´¦constÖ¸ÄÚÈÝÊÇ·ñÊÇconst
 	struct NC_CVariable *member;
 }NC_CType;
 
@@ -90,7 +90,7 @@ typedef struct NC_CVariable
 	NC_CType var_type;
 	EH_String *var_name;
 	NC_CCompInfo *comp_info;
-	u8 type_modifier;//ï¿½Ë´ï¿½constÖ¸Ö¸ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½const
+	u8 type_modifier;//´Ë´¦constÖ¸Ö¸ÕëÊÇ·ñÊÇconst
 }NC_CVariable;
 
 typedef enum NC_CFunctionType
@@ -114,6 +114,8 @@ typedef struct NC_CFunction
 	EH_String *func_body;
 }NC_CFunction;
 
+enum Mcotype { rplace, function };
+
 typedef struct NC_CMacro
 {
 	struct NC_CMacro *next, *prev;
@@ -121,12 +123,17 @@ typedef struct NC_CMacro
 	NC_CCompInfo *comp_info;
 	EH_String *parameter;
 	EH_String *after_expand;
+
+	Mcotype macrotype = rplace;
+	CToken *macro_name_tokens;
+	CToken *macro_afterexpand_tokens;
 	//add function pointer
 }NC_CMacro;
 
 typedef struct NC_Include
 {
 	char* name;
+	char* path;
 	int type;
 	EH_Array *ptrs;
 }NC_Include;

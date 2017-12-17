@@ -34,6 +34,8 @@ NC_Include* nc_include_init()
 	NC_Include *icl = (NC_Include*)malloc(sizeof(NC_Include));
 	icl->name = (char*)malloc(1000);
 	memset(icl->name, 0, 1000);
+	icl->path = (char*)malloc(1000);
+	memset(icl->path, 0, 1000);
 	icl->type = NULL;
 	icl->ptrs = eh_array_init(300);
 	return icl;
@@ -50,7 +52,7 @@ NC_CCompInfo* nc_ccompinfo_init(void)
 	return ci;
 }
 
-NC_CFile *nc_cfile_search(char *name)
+NC_CFile *nc_cfile_search(char *name)//╡Иурнд╪Ч
 {
 	//printf("searching: \"%s\"\n",name);
 	for (int i = 0; i < cfile_array->elmcount; i++)

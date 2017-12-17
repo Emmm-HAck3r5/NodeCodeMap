@@ -14,6 +14,8 @@ NC_File* nc_file_init(void)
 	NC_File *fp = (NC_File*)malloc(sizeof(NC_File));
 	fp->file = eh_string_init(4096);
 	fp->file_ptr = 0;
+	fp->path = (char*)malloc(1000);
+	memset(fp->path, 0, 1000);
 	return fp;
 }
 void nc_read_file(NC_File *file, const char *file_path)
@@ -21,6 +23,7 @@ void nc_read_file(NC_File *file, const char *file_path)
 	FILE *fp = fopen(file_path, "rb");
 	if (fp)
 	{
+		strcpy(file->path, file_path);
 		file->file_ptr = 0;
 		unsigned long size;
 		char *buffer;

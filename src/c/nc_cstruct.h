@@ -4,8 +4,8 @@
  * Email: easyai@outlook.com
  * Created Date: 2017-12-08 19:09:49
  * ------
- * Last Modified: 2017-12-10 18:07:46
- * Modified By: EasyAI ( easyai@outlook.com )
+ * Last Modified: 2017-12-17 19:06:08
+ * Modified By: Forewing (jujianai@hotmail.com)
  */
 #ifndef NC_CSTRUCT_H
 #define NC_CSTRUCT_H
@@ -18,6 +18,7 @@
 #include "eh_typedef.h"
 #include "nc_ctoken.h"
 #include "nc_io.h"
+//#include "nc_clex.h"
 
 typedef enum NC_CFileType
 {
@@ -30,11 +31,12 @@ typedef struct NC_CFile
 	struct NC_CFile *lchild, *rchild;
 	NC_CFileType file_type;
 	struct NC_CCompInfo *comp_info;
-	NC_CTokenStream *token_stream;
+	struct NC_CTokenStream *token_stream;
 	struct NC_CFunction *function_list;
 	struct NC_CVariable *var_list;
 	struct NC_CMacro *macro_list;
 	struct NC_CType *type_list;
+	EH_Array *include_arr;
 }NC_CFile;
 
 typedef struct NC_CTokenStream
@@ -45,10 +47,12 @@ typedef struct NC_CTokenStream
 
 typedef struct NC_CCompInfo
 {
-	EH_String *file_path;
+	EH_String *file_data;
+	char *file_path;
+	char *file_name;
 	EH_String *decl;
 	u32 lineno;
-	u32 pos;//¸Ã±äÁ¿ÓÃÓÚ»ñÈ¡decl£¬´æ´¢µÄÊÇftell·µ»ØÖµ
+	u32 pos;//ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½È¡declï¿½ï¿½ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ftellï¿½ï¿½ï¿½ï¿½Öµ
 }NC_CFileInfo;
 typedef enum NC_CTypeType
 {
@@ -76,7 +80,7 @@ typedef struct NC_CType
 	u8 type_type;
 	EH_String *type_name;
 	NC_CCompInfo *comp_info;
-	u8 type_modifier;//´Ë´¦constÖ¸ÄÚÈÝÊÇ·ñÊÇconst
+	u8 type_modifier;//ï¿½Ë´ï¿½constÖ¸ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½const
 	struct NC_CVariable *member;
 }NC_CType;
 
@@ -86,7 +90,7 @@ typedef struct NC_CVariable
 	NC_CType var_type;
 	EH_String *var_name;
 	NC_CCompInfo *comp_info;
-	u8 type_modifier;//´Ë´¦constÖ¸Ö¸ÕëÊÇ·ñÊÇconst
+	u8 type_modifier;//ï¿½Ë´ï¿½constÖ¸Ö¸ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½const
 }NC_CVariable;
 
 typedef enum NC_CFunctionType
@@ -97,7 +101,7 @@ typedef enum NC_CFunctionType
 	NC_CFunc_extern = 0x8,
 	NC_CFunc_static = 0x10,
 	NC_CFunc_inline = 0x20
-};
+}NC_CFunctionType;
 
 typedef struct NC_CFunction
 {
@@ -120,6 +124,19 @@ typedef struct NC_CMacro
 	//add function pointer
 }NC_CMacro;
 
+typedef struct NC_Include
+{
+	char* name;
+	int type;
+	EH_Array *ptrs;
+}NC_Include;
+
+#define NC_STD 1
+#define NC_CST 2
+
 NC_CFile* nc_cfile_init(NC_File *fp);
 NC_CCompInfo* nc_ccompinfo_init(void);
+
+NC_CFile *nc_cfile_search(char *name);
+NC_Include* nc_include_init();
 #endif

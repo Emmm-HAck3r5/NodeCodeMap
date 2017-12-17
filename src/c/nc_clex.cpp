@@ -4,8 +4,8 @@
  * Email: easyai@outlook.com
  * Created Date: 2017-12-08 19:09:34
  * ------
- * Last Modified: 2017-12-10 18:06:08
- * Modified By: EasyAI ( easyai@outlook.com )
+ * Last Modified: 2017-12-17 19:06:08
+ * Modified By: Forewing (jujianai@hotmail.com)
  */
 
 #include "nc_clex.h"
@@ -14,6 +14,7 @@ CToken *token_stream;
 EH_String *buffer;
 u32 current_lineno;
 NC_CFile *file_list;
+EH_Array *cfile_array = eh_array_init(300);
 
 const char nc_space[2] = { ' ','\t' };
 const char* nc_ckeyword[NC_KEYWORD_COUNT] = {
@@ -49,6 +50,7 @@ void nc_lex_open(NC_File *fp)
 {
 	NC_CFile *newfile = nc_cfile_init(fp);
 	__EH_DLIST_ADD_TAIL(file_list, rchild, lchild, newfile);
+	eh_array_append(cfile_array, newfile);
 	token_stream = newfile->token_stream->stream;
 	current_lineno = 0;
 	current_token = NULL;
@@ -197,7 +199,7 @@ int nc_analyze(NC_File *fp, u32 c)
 		{
 			if (is_line_link == false)
 			{
-				if (is_preprocess == true)//所有的预处理指令不再以\n为结束，统一以;为结束
+				if ((bool)is_preprocess == true)//所有的预处理指令不再以\n为结束，统一以;为结束
 				{
 					current_token = nc_ctoken_generate(COP_SEMICOLON, NULL, current_lineno);
 					nc_token_stream_add(current_token);
@@ -216,8 +218,10 @@ int nc_analyze(NC_File *fp, u32 c)
 		{
 			token_type = CTK_ENDSYMBOL;
 		}
+		/*
 		else
 			printf("error\n");
+		*/
 		nc_refresh_buffer(c);
 	}
 	else if (state == CLEX_IDENTIFIER)

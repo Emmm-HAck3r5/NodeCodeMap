@@ -14,13 +14,13 @@ function createWindow () {
 
   // 並載入應用程式的 index.html。
   win.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, 'reindex.html'),
     protocol: 'file:',
     slashes: true
   }));
 
   // 打開 DevTools。
-  win.webContents.openDevTools();
+  //win.webContents.openDevTools();
 
   // 視窗關閉時會觸發。
   win.on('closed', () => {

@@ -9,7 +9,6 @@ let transformRecord = {
     y: 0
 };
 
-
 let svg = d3.select('svg')
     .attr('width', WIDTH)
     .attr('height', HEIGHT)
@@ -132,13 +131,10 @@ function addZoomEventListener(nodes, codeNames, links){
     svg.call(d3.zoom()
         .scaleExtent([0.1,10])
         .on('zoom', () => {
-            const t = d3.event.transform; // t is d3.event.transform for short
-            const transformSTYLE = `translate(${t.x}, ${t.y}) scale(${t.k})`;
             for(const selection of [nodes, codeNames, links]){
-                zoomTransition(selection, transformSTYLE);
+                zoomTransition(selection, d3.event.transform);
             }
-            transformRecord.x = t.x;
-            transformRecord.y = t.y;
+            transformRecord = d3.event.transform;
         }))
         .on('dblclick.zoom', null)
         .on('dblclick.tap', null);
@@ -186,15 +182,17 @@ function clicked(data){
         x: centerX - data.x,
         y: centerY - data.y
     };
-    const transX = -WIDTH/4 + centerVector.x - transformRecord.x,
-          transY = centerVector.y - transformRecord.y;
+    const t = transformRecord;
+    const transX = -WIDTH/4 + centerVector.x - t.x,
+          transY = centerVector.y - t.y ;
     const transformSTYLE = `translate( ${transX}, ${transY})`;
+
     for(const selection of [nodes, codeNames, links]){
         zoomTransition(selection, transformSTYLE);
     }
     svg.attr('width', WIDTH / 2);
     d3.select('.codePage').attr('style', 'display: inline');
-
+    simulation.velocityDecay(0.6);
     CodePage.loadCode(undefined, data.id);
 }
 
@@ -247,3 +245,18 @@ function removeNetSimulation(nodes, links, codeNames){
                 .attr('y', (d) => (d.y + d.vy * 3 + getFontSize(d.id) / 4));
         });
 }
+
+var D3Svg = {};
+
+D3Svg.resetSvg = function(){
+    const nodes = svg.select('.nodes'),
+            links = svg.select('.links'),
+            codeNames = svg.select('.codeNames');
+    const transformSTYLE = `translate( 0, 0)`;
+    for(const selection of [nodes, codeNames, links]){
+        zoomTransition(selection, transformSTYLE);
+    }
+    d3.select('.codePage').attr('style', 'display: none');
+    simulation.velocityDecay(0.2);
+    svg.attr('width', WIDTH);
+};

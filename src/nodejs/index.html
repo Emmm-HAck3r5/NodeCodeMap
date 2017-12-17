@@ -18,11 +18,22 @@
     <svg></svg>
     <div class='codePage'>
       <ul class="nav nav-tabs codeTab" role="tablist">
-        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+          <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
       </ul>
       <div class="tab-content codeContent">
-        <div role="tabpanel" class="tab-pane fade in active" id="home">i'm home</div>
+        <div role="tabpanel" class="tab-pane active" id="home">...</div>
       </div>
+      <form class="form-inline">
+        <div class="form-group has-success has-feedback">
+          <label class="control-label" for="codeSearch">Search</label>
+          <div class="input-group">
+            <span class="input-group-addon">int* (ptr)</span>
+            <input type="text" class="form-control" id="codeSearch" aria-describedby="codeSearchSuccessStatus">
+          </div>
+          <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+          <span id="codeSearchSuccessStatus" class="sr-only">(success)</span>
+        </div>
+      </form>
     </div>  
   </body>
   <script type="text/javascript" src="script/codePage.js"></script>

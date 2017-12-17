@@ -19,4 +19,12 @@ svg {
   height: 100%;
   width: 49%; }
 
+a {
+  float: left; }
+
+button {
+  padding-top: 20%;
+  padding-bottom: 20%;
+  float: left; }
+
 /*# sourceMappingURL=index-sheet.css.map */

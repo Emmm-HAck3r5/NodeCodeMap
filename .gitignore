@@ -1,2 +1,3 @@
 src/nodejs/node_modules
 src/nodejs/.jshintrc
+.vscode

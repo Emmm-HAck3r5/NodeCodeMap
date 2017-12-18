@@ -16,7 +16,9 @@ void *nc_file_dep_generate(const char *dir_path)
 	char *temp_str=NULL;//临时数组
 	struct NC_Include *icl_info;//存储include内容的临时变量
 	nc_lex_init();
-	for (int i = 0; i < file_array_path->elmcount; i++)//对于每个文件
+	int i;
+	int j;
+	for (i = 0; i < file_array_path->elmcount; i++)//对于每个文件
 	{
 		file = nc_file_init();//给他申请一个空间
 		//icl_info = nc_include_init();
@@ -62,7 +64,7 @@ void *nc_file_dep_generate(const char *dir_path)
 	}
 	temp_str = (char*)malloc(300);
 	memset(temp_str, 0, 300);
-	for (int i = 0; i < cfile_array->elmcount; i++)//初始化CFile树结构
+	for (i = 0; i < cfile_array->elmcount; i++)//初始化CFile树结构
 	{
 		((NC_CFile*)cfile_array->data[i])->lchild = (NC_CFile*)cfile_array->data[i];
 		((NC_CFile*)cfile_array->data[i])->rchild = (NC_CFile*)cfile_array->data[i];
@@ -70,7 +72,7 @@ void *nc_file_dep_generate(const char *dir_path)
 	}
 	NC_CFile *temp_ptr;
 	bool is_1st_c=true;
-	for (int i = 0; i < cfile_array->elmcount; i++)
+	for (i = 0; i < cfile_array->elmcount; i++)
 		if (((NC_CFile*)cfile_array->data[i])->file_type == NC_CFile_C)
 		{
 			if (is_1st_c)
@@ -87,7 +89,7 @@ void *nc_file_dep_generate(const char *dir_path)
 			}
 		}
 	int flag_start = 0;
-	for (int i = 0; i < cfile_array->elmcount; i++)
+	for (i = 0; i < cfile_array->elmcount; i++)
 	{
 		flag_start = 0;
 		temp_ptr = (NC_CFile*)cfile_array->data[i];
@@ -130,7 +132,7 @@ void *nc_file_dep_generate(const char *dir_path)
 		}
 	}
 	*/
-	for (int i = 0; i < cfile_array->elmcount; i++)
+	for (i = 0; i < cfile_array->elmcount; i++)
 	{
 		printf("%s\n", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
 		if (((NC_CFile*)cfile_array->data[i])->rchild != NULL)

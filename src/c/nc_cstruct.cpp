@@ -55,7 +55,8 @@ NC_CCompInfo* nc_ccompinfo_init(void)
 NC_CFile *nc_cfile_search(char *name)//╡Иурнд╪Ч
 {
 	//printf("searching: \"%s\"\n",name);
-	for (int i = 0; i < cfile_array->elmcount; i++)
+	int i;
+	for (i = 0; i < cfile_array->elmcount; i++)
 	{
 		//printf("checking: \"%s\"\nresult: ", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
 		if (strcmp(((NC_CFile*)cfile_array->data[i])->comp_info->file_name, name)==0)

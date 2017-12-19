@@ -7,6 +7,7 @@
  * Last Modified: 2017-12-10 18:07:31
  * Modified By: EasyAI ( easyai@outlook.com )
  */
+
 #ifndef NC_CTOKEN_H
 #define NC_CTOKEN_H
 
@@ -60,6 +61,8 @@ typedef enum CTokenType
 	COP_SEMICOLON, // ;
 	COP_COMMA,	// ,
 	COP_ELLIPSIS, // ...
+	COP_POINTERTO,// ->
+	COP_COLON,	// :
 	//关键字
 	CKW_AUTO,
 	CKW_SHORT,
@@ -114,6 +117,7 @@ typedef enum CTokenType
 	//字面量（所有字面常量全当作字符串处理）
 	CTK_STR,
 	CTK_NUM,
+	CTK_ANNO,
 	//标识符
 	CTK_IDENT,
 	//预留状态

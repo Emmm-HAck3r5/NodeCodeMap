@@ -1,11 +1,12 @@
 /*
  * File: eh_string.c
- * Author: EasyAI
- * Email: easyai@outlook.com
+ * Author: EasyAI & Forewing
+ * Email: easyai@outlook.com & jujianai@hotmail.com
  * Created Date: 2017-12-08 10:18:42
  * ------
- * Last Modified: 2017-12-08 10:18:43
- * Modified By: EasyAI ( easyai@outlook.com )
+ * Last Modified: 2017-12-14 01:00:40
+ * Modified By: Forewing (jujianai@hotmail.com)
+ * Changelog: Add kmp(eh_string_findstr)
  */
 #include "eh_string.h"
 
@@ -133,4 +134,90 @@ void eh_string_reverse(EH_String *str)
 			*str = *p;
 		}
 	}
+}
+char* eh_string_toasciistring(char *dest, EH_String *str)
+{
+	if (str)
+	{
+		dest = (char*)realloc(dest, (str->length) * sizeof(char));
+		int i = 0;
+		for (i = 0; i < str->length; i++)
+		{
+			if (str->value[i] > 127)
+				dest[i] = '?';
+			else
+				dest[i] = str->value[i];
+		}
+		dest[i] = '\0';
+		return dest;
+	}
+	return NULL;
+}
+
+int eh_string_ascii_compare(EH_String *str, const char *s)
+{
+	if (str->length != strlen(s))
+		return 0;
+	else
+	{
+		int i = 0;
+		for (i = 0; i < str->length; i++)
+		{
+			if (str->value[i] != (u32)s[i])
+				return 0;
+		}
+	}
+	return 1;
+}
+
+int eh_string_compare(EH_String *str, EH_String *s)
+{
+	if (str->length != s->length)
+		return 0;
+	else
+	{
+		int i = 0;
+		for (i = 0; i < str->length; i++)
+		{
+			if (str->value[i] != s->value[i])
+				return 0;
+		}
+	}
+	return 1;
+}
+
+int eh_string_findstr(EH_String *src, EH_String *tar)//返回tar在src中第一次出现的位置(从1开始记)， 为0则未出现
+{
+    int p[10000]={},i=0,j=0;
+    p[0]=-1;
+    j=-1;
+    for (i=1;i<=tar->length;i++)
+    {
+        while ((j>0)&&(tar->value[j+1]!=tar->value[i]))
+        {
+            j=p[j];
+        }
+        if (tar->value[j+1]==tar->value[i])
+        {
+            j++;
+        }
+        p[i]=j;
+    }
+    j=-1;
+    for (i=0;i<src->length;i++)
+    {
+        while ((j>0)&&(tar->value[j+1]!=src->value[i]))
+        {
+            j=p[j];
+        }
+        if (tar->value[j+1]==src->value[i])
+        {
+            j++;
+        }
+        if (j==tar->length-1)
+        {
+            return i+1-tar->length;
+        }
+    }
+    return -1;
 }

@@ -19,16 +19,20 @@
 #include "eh_unicode.h"
 
 #define NC_FILE_EOF 0x0
+
+
+extern EH_Array *cfile_array;
 typedef struct NC_File
 {
 	EH_String *file;
+	char *path;
 	u32 file_ptr;
 }NC_File;
 //#ifdef __cplusplus
 //extern "C" {
 //#endif
 	NC_File* nc_file_init(void);
-	void nc_read_file(NC_File *file, char *file_path);
+	void nc_read_file(NC_File *file, const char *file_path);
 	void nc_get_cfiles(EH_Array *files,const char *dir_path);
 	u32 nc_getch(NC_File *fp);
 	void nc_file_rewind(NC_File *fp);

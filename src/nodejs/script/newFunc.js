@@ -6,7 +6,8 @@ const centerY  = HEIGHT / 2;
 let netToggle = true;
 let transformRecord = {
     x: 0,
-    y: 0
+    y: 0,
+    k: 1
 };
 
 let svg = d3.select('svg')
@@ -184,7 +185,7 @@ function clicked(data){
     };
     const t = transformRecord;
     const transX = -WIDTH/4 + centerVector.x - t.x,
-          transY = centerVector.y - t.y ;
+          transY = centerVector.y - t.y;
     const transformSTYLE = `translate( ${transX}, ${transY})`;
 
     for(const selection of [nodes, codeNames, links]){

@@ -20,11 +20,6 @@ NC_CFile* nc_cfile_init(NC_File *fp)
 	__EH_DLIST_INIT(file, rchild, lchild);
 	eh_string_copy(file->comp_info->file_data, fp->file);
 	strcpy(file->comp_info->file_path,fp->path);
-	strcpy(file->comp_info->file_name, fp->path);
-	while (strchr(file->comp_info->file_name, '\\') != 0)
-	{
-		file->comp_info->file_name++;
-	}
 	file->include_arr = eh_array_init(300);
 	return file;
 }
@@ -46,8 +41,6 @@ NC_CCompInfo* nc_ccompinfo_init(void)
 	ci->file_data = eh_string_init(128);
 	ci->file_path = (char*)malloc(1000);
 	memset(ci->file_path, 0, 1000);
-	ci->file_name = (char*)malloc(1000);
-	memset(ci->file_name, 0, 1000);
 	return ci;
 }
 

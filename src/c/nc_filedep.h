@@ -12,6 +12,7 @@
 #define NC_CST 2
 
 void *nc_file_dep_generate(const char *dir_path);
-NC_CFile *nc_cfile_search(char *name);
+NC_CFile *nc_filedep_search(char *name);
+char *nc_filedep_getname(char *path);
 
 #endif

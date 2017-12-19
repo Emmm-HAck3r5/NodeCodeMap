@@ -49,7 +49,6 @@ typedef struct NC_CCompInfo
 {
 	EH_String *file_data;
 	char *file_path;
-	char *file_name;
 	EH_String *decl;
 	u32 lineno;
 	u32 pos;//该变量用于获取decl，存储的是ftell返回值

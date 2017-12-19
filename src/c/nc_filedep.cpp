@@ -1,13 +1,25 @@
 #include "nc_filedep.h"
 
-NC_CFile *nc_cfile_search(char *name)//查找文件
+char *nc_filedep_getname(char *path)
+{
+	char *name = (char*)malloc(300);
+	memset(name, 0, 300);
+	strcpy(name,path);
+	while (strchr(name, '\\') != 0)
+	{
+		name++;
+	}
+	return name;
+}
+
+NC_CFile *nc_filedep_search(char *name)//查找文件
 {
 	//printf("searching: \"%s\"\n",name);
 	int i;
 	for (i = 0; i < cfile_array->elmcount; i++)
 	{
 		//printf("checking: \"%s\"\nresult: ", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
-		if (strcmp(((NC_CFile*)cfile_array->data[i])->comp_info->file_name, name) == 0)
+		if (strcmp(nc_filedep_getname(((NC_CFile*)cfile_array->data[i])->comp_info->file_path), name) == 0)
 		{
 			//printf("match: %s\n\n", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
 			return (NC_CFile*)cfile_array->data[i];
@@ -126,14 +138,14 @@ void *nc_file_dep_generate(const char *dir_path)
 		printf("%d\n", (NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr);
 		printf("%d\n", ((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[flag_start]));
 		*/
-		temp_ptr->lchild = nc_cfile_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[flag_start])->name);//左孩子为第一个头文件
-		if (nc_cfile_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[flag_start])->name) == NULL)
+		temp_ptr->lchild = nc_filedep_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[flag_start])->name);//左孩子为第一个头文件
+		if (nc_filedep_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[flag_start])->name) == NULL)
 			continue;
 		temp_ptr->lchild->parent = temp_ptr;
 		temp_ptr = temp_ptr->lchild;
 		for (int j = flag_start+1; j < ((NC_CFile*)cfile_array->data[i])->include_arr->elmcount; j++)//剩下的头文件都是左孩子的右孩子链
 		{
-			temp_ptr->rchild = nc_cfile_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[j])->name);
+			temp_ptr->rchild = nc_filedep_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[j])->name);
 			if (temp_ptr->rchild == NULL)
 				continue;
 			temp_ptr->rchild->parent = temp_ptr;
@@ -150,22 +162,22 @@ void *nc_file_dep_generate(const char *dir_path)
 		}
 	}
 	*/
-	for (i = 0; i < cfile_array->elmcount; i++)
+	/*for (i = 0; i < cfile_array->elmcount; i++)
 	{
-		printf("%s\n", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
+		printf("%s\n", ((NC_CFile*)cfile_array->data[i])->comp_info->file_path);
 		if (((NC_CFile*)cfile_array->data[i])->rchild != NULL)
 		{
-			printf("R: %s\n", ((NC_CFile*)cfile_array->data[i])->rchild->comp_info->file_name);
+			printf("R: %s\n", ((NC_CFile*)cfile_array->data[i])->rchild->comp_info->file_path);
 		}
 		if (((NC_CFile*)cfile_array->data[i])->lchild != NULL)
 		{
-			printf("L: %s\n", ((NC_CFile*)cfile_array->data[i])->lchild->comp_info->file_name);
+			printf("L: %s\n", ((NC_CFile*)cfile_array->data[i])->lchild->comp_info->file_path);
 		}
 		if (((NC_CFile*)cfile_array->data[i])->parent != NULL)
 		{
-			printf("P: %s\n", ((NC_CFile*)cfile_array->data[i])->parent->comp_info->file_name);
+			printf("P: %s\n", ((NC_CFile*)cfile_array->data[i])->parent->comp_info->file_path);
 		}
-	}
+	}*/
 	/*printf("%d\n", cfile_array->elmcount);
 	for (int i = 0; i < cfile_array->elmcount; i++)
 	{

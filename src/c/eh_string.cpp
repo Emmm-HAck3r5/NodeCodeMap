@@ -116,7 +116,21 @@ int eh_string_copy(EH_String *dest, const EH_String *src)
 	}
 	return -1;
 }
-
+int eh_string_ccopy(EH_String *dest, const char *src)
+{
+	if (src&&dest)
+	{
+		u32 i;
+		u32 length = strlen(src);
+		if (dest->buffersize <= length)
+			eh_string_realloc(dest, length + 1);
+		if (dest->value)
+			for (i = 0; i <= length; i++)
+				dest->value[i] = src[i];
+		return 1;
+	}
+	return -1;
+}
 void eh_string_reverse(EH_String *str)
 {
 	EH_String *p;

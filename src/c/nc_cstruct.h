@@ -59,7 +59,7 @@ typedef enum NC_CTypeType
 	NC_CType_Struct = 0x2,
 	NC_CType_Enum = 0x4,
 	NC_CType_Union = 0x8,
-	NC_CType_HBasic = 0x10,
+	NC_CType_HBasic = 0x10,//这里存unsigned还是signed 如果是unsigned则该位置1
 	NC_CType_Pointer = 0x20,
 	NC_CType_Array = 0x40,
 }NC_CTypeType;

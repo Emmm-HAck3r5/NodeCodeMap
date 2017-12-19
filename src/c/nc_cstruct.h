@@ -135,15 +135,9 @@ typedef struct NC_Include
 	char* name;
 	char* path;
 	int type;
-	EH_Array *ptrs;
 }NC_Include;
-
-#define NC_STD 1
-#define NC_CST 2
 
 NC_CFile* nc_cfile_init(NC_File *fp);
 NC_CCompInfo* nc_ccompinfo_init(void);
-
-NC_CFile *nc_cfile_search(char *name);
 NC_Include* nc_include_init();
 #endif

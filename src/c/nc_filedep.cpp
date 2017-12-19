@@ -1,5 +1,23 @@
 #include "nc_filedep.h"
 
+NC_CFile *nc_cfile_search(char *name)//查找文件
+{
+	//printf("searching: \"%s\"\n",name);
+	int i;
+	for (i = 0; i < cfile_array->elmcount; i++)
+	{
+		//printf("checking: \"%s\"\nresult: ", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
+		if (strcmp(((NC_CFile*)cfile_array->data[i])->comp_info->file_name, name) == 0)
+		{
+			//printf("match: %s\n\n", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
+			return (NC_CFile*)cfile_array->data[i];
+		}
+		//printf("unmatch\n");
+	}
+	//printf("failed\n\n");
+	return NULL;
+}
+
 //处理后filelist指向根文件
 //filelist结构：每个节点右孩子与其地位平等，左孩子是其依赖的文件
 //若父亲是自己，说明为根节点

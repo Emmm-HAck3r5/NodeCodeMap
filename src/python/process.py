@@ -24,18 +24,48 @@ def create_FMlink(json, vertex): # File-to-Member link
             "type": "FM"
         }
         json['links'].append(link)
-    json = create_MMLink(json, members)
+    return json, members
+
+def create_MMLink(json, members):
+    cFunc, _, _, cType = members
+    json = get_func_var_links(json, cFunc)
+    json = get_type_var_links(json, cType)
     return json
 
-def create_MMLink(json, members): # Member-to-Member link
-    for mem in members:
-        for refer in mem.refer_list: # refer_list is not consistent
-            link = {
-                "source": mem.name.contents.value, # name's c_type unknown
-                "target": refer.contents.name.contents.value,
-                "type": "MM"
-            }
-            json['links'].append(link)
+def get_func_var_links(json, cFunc):
+    now_params = cFunc.parameter.contents
+    next_params = now_params.next.contents
+    now_params_name = now_params.name.contents.value
+    next_params_name = next_params.name.contents.value
+    while now_params_name is not next_params_name:
+        link = {
+            "source": cFunc.name.contents.value,
+            "target": now_params_name,
+            "type": "MM"
+        }
+        json["links"].append(link)
+        now_params = next_params.parameter.contents
+        next_params = now_params.next.contents
+        now_params_name = now_params.name.contents.value
+        next_params_name = next_params.name.contents.value
+    return json
+
+def get_type_var_links(json, cType):
+    now_member = cType.parameter.contents
+    next_member = now_member.next.contents
+    now_member_name = now_member.name.contents.value
+    next_member_name = next_member.name.contents.value
+    while now_member_name is not next_member_name:
+        link = {
+            "source": cType.name.contents.value,
+            "target": now_member_name,
+            "type": "MM"
+        }
+        json["links"].append(link)
+        now_member = next_member.parameter.contents
+        next_member = now_member.next.contents
+        now_member_name = now_member.name.contents.value
+        next_member_name = next_member.name.contents.value
     return json
 
 # NODE PROCESS
@@ -58,9 +88,9 @@ def members_register(json, members):
     cFunc, cVar, cMacro, cType = members
 
     func_node = func_application(cFunc)
-    var_node = var_application(cFunc)
-    macro_node = macro_application(cFunc)
-    type_node = type_application(cFunc)
+    var_node = var_application(cVar)
+    macro_node = macro_application(cMacro)
+    type_node = type_application(cType)
 
     json["nodes"].extend([func_node, var_node, macro_node, type_node])
     return json

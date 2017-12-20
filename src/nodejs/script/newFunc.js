@@ -58,36 +58,9 @@ function treeInit(err, data){
             value: d.value
         };
     });
-    let links = svg.append('g')
-        .classed('links', true)
-        .selectAll('line')
-        .data(data.links)
-        .enter()
-        .append('line')
-            .attr('class', (d, i) => `LINE-${i}`)
-            .attr('stroke-width', () => 3)
-            .attr('visibility', 'hidden');
-    let nodes = svg.append('g')
-        .classed('nodes', true)
-        .selectAll('circle')
-        .data(dataNodes)
-        .enter()
-        .append('circle')
-            .attr('id', (d) => `NODE-${d.id}`)
-            .attr('r', (d) => d.value)
-            .attr('fill', (d) => color(d.x))
-            .attr('cx', (d) => d.x)
-            .attr('cy', (d) => d.y);
-    let codeNames = svg.append('g')
-        .classed('codeNames', true)
-        .selectAll('text')
-        .data(dataNodes)
-        .enter()
-        .append('text')
-            .attr('id', (d) => `TEXT-${d.id}`)
-            .text((d) => d.id)
-            .attr('text-anchor', 'middle')
-            .attr('visibility', 'hidden');
+    
+    let [links, nodes, codeNames] = itemInitialize(dataNodes, data.links);
+    
     simulation.nodes(dataNodes).alphaDecay(0)
         .on('tick', () => {
             nodes
@@ -105,27 +78,75 @@ function treeInit(err, data){
     dNodes = dataNodes;
 }
 
-// drag listener
-function drags(d){
-    if(!d3.event.active){
-        simulation.alphaTarget(0.3).restart();
-    }
-    d.fx = d.x;
-    d.fy = d.y;
+// links, nodes, texts init
+function itemInitialize(dataNodes, dataLinks){
+    let links = svg.append('g')
+        .classed('links', true)
+        .selectAll('line')
+        .data(dataLinks)
+        .enter()
+        .append('line')
+            .attr('class', (d, i) => `LINE-${i}`)
+            .attr('stroke', (d) => {
+                let color;
+                switch(d.type){
+                    case 'FF': color = '#8A2BE2'; break; // BLUEVIOLET
+                    case 'FM': color = '#F5F5DC'; break; // BEIGE
+                    case 'MM': color = '#FFFAFA'; break; // SNOW
+                    default: color = '#FFFAFA'; // SNOW
+                }
+                return color;
+            })
+            .attr('stroke-width', (d) => {
+                let width;
+                switch(d.type){
+                    case 'FF': width = 7; break;
+                    case 'FM': width = 5; break;
+                    case 'MM': width = 3; break;
+                    default: width = 5;
+                }
+                return width;
+            })
+            .attr('visibility', 'hidden');
+    let nodes = svg.append('g')
+        .classed('nodes', true)
+        .selectAll('circle')
+        .data(dataNodes)
+        .enter()
+        .append('circle')
+            .attr('id', (d) => `NODE-${d.id}`)
+            .attr('r', (d) => {
+                let dr = (d.class === 'file') ? 20 : 13; 
+                return dr;
+            })
+            .attr('fill', (d) => {
+                let dcolor;
+                switch(d.class){
+                    case 'file': dcolor = '#9370DB'; break; // MEDIUMPURPLE
+                    case 'func': dcolor = '#00BFFF'; break; // DEEPSKYBLUE
+                    case 'var': dcolor = '#ADFF2F'; break; // GREENYELLOW
+                    case 'macro': dcolor = '#7FFFD4'; break; // AQUAMARINE
+                    case 'type': dcolor = '#FFFF00'; break; // YELLOW
+                    default : dcolor = 'DC143C';
+                }
+                return dcolor;
+            })
+            .attr('cx', (d) => d.x)
+            .attr('cy', (d) => d.y);
+    let codeNames = svg.append('g')
+        .classed('codeNames', true)
+        .selectAll('text')
+        .data(dataNodes)
+        .enter()
+        .append('text')
+            .attr('id', (d) => `TEXT-${d.id}`)
+            .text((d) => d.id)
+            .attr('text-anchor', 'middle')
+            .attr('visibility', 'hidden');
+    return [links, nodes, codeNames];
 }
-function dragging(d){
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-}
-function dragged(d){
-    if(!d3.event.active){
-        simulation
-            .alpha(1)
-            .alphaTarget(0);
-    }
-    d.fx = null;
-    d.fy = null;
-}
+
+
 
 // add zoom event
 function addZoomEventListener(nodes, codeNames, links){
@@ -168,6 +189,28 @@ function addDragEeventListener(nodes, codeNames){
             .on('drag', dragging)
             .on('end', dragged));
 }
+// drag listener
+function drags(d){
+    if(!d3.event.active){
+        simulation.alphaTarget(0.3).restart();
+    }
+    d.fx = d.x;
+    d.fy = d.y;
+}
+function dragging(d){
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+}
+function dragged(d){
+    if(!d3.event.active){
+        simulation
+            .alpha(1)
+            .alphaTarget(0);
+    }
+    d.fx = null;
+    d.fy = null;
+}
+
 // add click event listeners
 function addClickEventListener(nodes, codeNames, links){
     nodes.on('click', clicked);

@@ -75,7 +75,8 @@ def vertex_register(json, vertex):
         "id": vertex_comp.file_name.contents.value,  # file_name's c_type unknown
         "decl": vertex_comp.decl.value, # decl's c_type unknown
         "fileData": vertex_comp.file_data.value,
-        "lineno": vertex_comp.lineno.value
+        "lineno": vertex_comp.lineno.value,
+        "type": "file"
     }
     json["nodes"].append(node)
     

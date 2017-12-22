@@ -30,8 +30,10 @@ def create_MMLink(json, members):
     cFunc, _, _, cType = members
     json = get_func_var_links(json, cFunc)
     json = get_type_var_links(json, cType)
+    json = get_func_func_links(json, cFunc)
     return json
 
+# LINKS COMMON PROCESS
 def get_func_var_links(json, cFunc):
     now_params = cFunc.parameter.contents
     next_params = now_params.next.contents
@@ -68,6 +70,25 @@ def get_type_var_links(json, cType):
         next_member_name = next_member.name.contents.value
     return json
 
+def get_func_func_links(json, cFunc):
+    func_body = cFunc.func_body.contents.values
+    func_name = cFunc.name.contents.value
+    dataNode = json["nodes"]
+    for node in dataNode:
+        nodeName = node["id"]
+        if(node["type"] is not "func" or nodeName is func_name):
+            continue
+        node_posi = func_body.find(nodeName)
+        if node_posi == -1: # not found
+            continue
+        link = {
+            "source": func_name,
+            "target": nodeName,
+            "type": "MM"
+        }
+        json["links"].append(link)
+    return json
+
 # NODE PROCESS
 def vertex_register(json, vertex):
     vertex_comp = vertex.contents.comp_info.contents
@@ -99,7 +120,8 @@ def members_register(json, members):
 def func_application(cFunc):
     func_node = {
         "id": cFunc.name.contents.value, # func_name's c_type unknown
-        "class": "func"
+        "class": "func",
+        "codeContent": cFunc.func_body.contents.values # func_name's c_type unknown
     }
     return func_node
 

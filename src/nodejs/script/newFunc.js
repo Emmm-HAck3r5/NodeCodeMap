@@ -136,6 +136,12 @@ function addZoomEventListener(nodes, codeNames, links){
                 zoomTransition(selection, d3.event.transform);
             }
             transformRecord = d3.event.transform;
+            
+        })
+        .on('end', () => {
+            console.log('END ZOOM!');
+            console.log(`(${d3.event.transform.x}, ${d3.event.transform.y}, ${d3.event.transform.k})`);
+            console.log()
         }))
         .on('dblclick.zoom', null)
         .on('dblclick.tap', null);
@@ -186,7 +192,7 @@ function clicked(data){
     const t = transformRecord;
     const transX = -WIDTH/4 + centerVector.x - t.x,
           transY = centerVector.y - t.y;
-    const transformSTYLE = `translate( ${transX}, ${transY})`;
+    const transformSTYLE = `translate( ${-WIDTH/4}, ${0})`;
 
     for(const selection of [nodes, codeNames, links]){
         zoomTransition(selection, transformSTYLE);

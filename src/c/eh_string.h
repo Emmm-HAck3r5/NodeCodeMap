@@ -37,6 +37,7 @@ typedef struct EH_String
 	int eh_string_findc(EH_String *str, u32 c);
 	void eh_string_substr(EH_String *dest, EH_String *str, unsigned int begin, int end);
 	int eh_string_copy(EH_String *dest, const EH_String *src);
+	int eh_string_ccopy(EH_String *dest, const char *src);
 	void eh_string_reverse(EH_String *str);
 	char* eh_string_toasciistring(char *dest, EH_String *str);
 	int eh_string_ascii_compare(EH_String *str, const char *s);

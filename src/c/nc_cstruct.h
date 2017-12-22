@@ -71,7 +71,8 @@ typedef enum NC_CTypeModifier
 	NC_CTypeModifier_Extern = 0x4,
 	NC_CTypeModifier_Register = 0x8,
 	NC_CTypeModifier_Volatile = 0x10,
-	NC_CTypeModifier_Auto = 0x20
+	NC_CTypeModifier_Auto = 0x20,
+	NC_CTypeModifier_Typedef = 0x40
 }NC_CTypeModifier;
 typedef struct NC_CType
 {
@@ -86,7 +87,7 @@ typedef struct NC_CType
 typedef struct NC_CVariable
 {
 	struct NC_CVariable *next, *prev;
-	NC_CType var_type;
+	NC_CType *var_type;
 	EH_String *var_name;
 	NC_CCompInfo *comp_info;
 	u8 type_modifier;//此处const指指针是否是const
@@ -108,7 +109,7 @@ typedef struct NC_CFunction
 	EH_String *func_name;
 	NC_CCompInfo *comp_info;
 	u8 func_type;
-	NC_CType func_ret_type;
+	NC_CType *func_ret_type;
 	struct NC_CVariable *parameter;
 	EH_String *func_body;
 }NC_CFunction;
@@ -138,5 +139,8 @@ typedef struct NC_Include
 
 NC_CFile* nc_cfile_init(NC_File *fp);
 NC_CCompInfo* nc_ccompinfo_init(void);
+NC_CType* nc_ctype_init(void);
+NC_CVariable* nc_cvariable_init(void);
+NC_CFunction* nc_cfunction_init(void);
 NC_Include* nc_include_init();
 #endif

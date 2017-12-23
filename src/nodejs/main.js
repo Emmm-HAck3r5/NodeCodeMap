@@ -60,5 +60,6 @@ function createWindow () {
   win.on('resize', () => {
     const size = win.getSize();
     win.webContents.send('resize', size);
+    console.log(size);
   });
 }

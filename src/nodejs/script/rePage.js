@@ -40,7 +40,7 @@ function insertTabHTML(fileTag){
             <a href="#CONTENT-${fileTag}" data-toggle="tab" class="tag" id="TAB-${fileTag}">${fileTag}.cpp</a>
             <a href="#" class="closebutton" id="RM-${fileTag}">&times;</a>    
         </li>`;
-    $('.nav-tabs').append(tabHTML);
+    $('.nav-tabs').prepend(tabHTML);
     $(`#TAB-${fileTag} a`)
         .click( (event) => {
             console.log('show?');
@@ -49,7 +49,7 @@ function insertTabHTML(fileTag){
             $(`.tab-pane`).removeClass('show');
             $(`#CONTENT-${fileId}`).addClass('show');
         });
-    $(`#TAB-${fileTag} button`)
+    $(`#RM-${fileTag}`)
         .click(buttonRemoveEvent);
 }
 // // Remove Event
@@ -106,12 +106,12 @@ function showNext(nextFileTag){
 
 function insertContentHTML(fileTag, code){
     // console.log('INSERT CONTENT!!');
-    // let firstPageClass = '';
-    // if (pageArr.length === 0){
-    //     firstPageClass = 'in ';
-    // }
+    let firstPageClass = '';
+    if (pageArr.length === 0){
+        firstPageClass = ' in';
+    }
     const contentHTML = `
-        <div class="tab-pane" id="CONTENT-${fileTag}">
+        <div class="tab-pane fade" id="CONTENT-${fileTag}">
             <pre class="prettyprint">${code}</pre>
         </div>`;
     $('.tab-content').append(contentHTML);
@@ -120,8 +120,11 @@ function insertContentHTML(fileTag, code){
 function pushAndShow(fileTag){
     // console.log('PUSH AND SHOW!!');
     pageArr.push(fileTag);
-    $(`.tab-pane`).removeClass('show');
-    $(`#CONTENT-${fileTag}`).addClass('show');
+    $(`#TAB-${fileTag} a`).tab('show');
+    //$(`.tab-pane`).removeClass('in');
+    //$(`.tab-pane`).removeClass('active');
+    //$(`#CONTENT-${fileTag}`).addClass('active');
+    //$(`#CONTENT-${fileTag}`).addClass('in');
     PR.prettyPrint();
 }
 

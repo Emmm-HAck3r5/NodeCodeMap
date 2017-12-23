@@ -2,10 +2,9 @@
 
 char *nc_filedep_getname(char *path)
 {
-	char *name = (char*)malloc(300);
-	memset(name, 0, 300);
+	char *name = (char*)malloc(1000);
 	strcpy(name,path);
-	while (strchr(name, '\\') != 0)
+	while ((strchr(name, '\\') != 0)&&(name[0]!='.'))
 	{
 		name++;
 	}
@@ -14,19 +13,18 @@ char *nc_filedep_getname(char *path)
 
 NC_CFile *nc_filedep_search(char *name)//查找文件
 {
-	//printf("searching: \"%s\"\n",name);
-	int i;
+	int i=0;
 	for (i = 0; i < cfile_array->elmcount; i++)
 	{
-		//printf("checking: \"%s\"\nresult: ", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
-		if (strcmp(nc_filedep_getname(((NC_CFile*)cfile_array->data[i])->comp_info->file_path), name) == 0)
+		if ((NC_CFile*)cfile_array->data[i] != NULL)
 		{
-			//printf("match: %s\n\n", ((NC_CFile*)cfile_array->data[i])->comp_info->file_name);
-			return (NC_CFile*)cfile_array->data[i];
+			if (strcmp(nc_filedep_getname(((NC_CFile*)cfile_array->data[i])->comp_info->file_path), name) == 0)
+			{
+				return (NC_CFile*)cfile_array->data[i];
+			}
 		}
-		//printf("unmatch\n");
+		
 	}
-	//printf("failed\n\n");
 	return NULL;
 }
 
@@ -37,17 +35,16 @@ NC_CFile *nc_filedep_search(char *name)//查找文件
 //暂不支持出现不同目录拥有同名文件
 void *nc_file_dep_generate(const char *dir_path)
 {
-	EH_Array *file_array_path = eh_array_init(300);//储存所有文件路径的数组
-	//EH_Array *cfile_array = eh_array_init(300);
+	EH_Array *file_array_path = eh_array_init(1000);//储存所有文件路径的数组
 	nc_get_cfiles(file_array_path, dir_path);//读取目录下所有文件的路径
 	NC_File *file=nc_file_init();//用于读文件的临时变量
 	CToken *temp_tk;//用于遍历token的临时变量
 	bool include_flag = false;//用于判断是否为头文件相对路径
-	char *temp_str=NULL;//临时数组
-	struct NC_Include *icl_info;//存储include内容的临时变量
+	char *temp_str=NULL;//临时字符串，用于传递
+	struct NC_Include *icl_info= nc_include_init();//存储include内容的临时变量
 	nc_lex_init();
-	int i;
-	int j;
+	int i=0;
+	int j=0;
 	for (i = 0; i < file_array_path->elmcount; i++)//对于每个文件
 	{
 		file = nc_file_init();//给他申请一个空间
@@ -68,12 +65,12 @@ void *nc_file_dep_generate(const char *dir_path)
 				include_flag = false;//处理完成，取消#include的出现状态
 				icl_info->type = NC_CST;//自定义头文件
 				temp_str = eh_string_toasciistring(temp_str, temp_tk->token_value);//获取带引号的头文件相对路径
+				while(temp_str[0]!='\"')
+					temp_str++;
 				temp_str++;//删除第一个引号
 				if (strchr(temp_str, '\"') == NULL) continue;
 				strncpy(icl_info->path, temp_str, (int)(strchr(temp_str, '\"') - temp_str));//删掉末尾的引号
-				strcpy(icl_info->name, icl_info->path);
-				while (strchr(icl_info->name, '\\') != NULL)
-					icl_info->name++;//获取文件名,非相对路径
+				icl_info->name = nc_filedep_getname(icl_info->path);
 				eh_array_append(((NC_CFile*)cfile_array->data[i])->include_arr, icl_info);//给对应文件加上该头文件
 				//printf("%d %s\n",((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[((NC_CFile*)cfile_array->data[i])->include_arr->elmcount-1])->type, ((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[((NC_CFile*)cfile_array->data[i])->include_arr->elmcount - 1])->name);
 			}
@@ -92,8 +89,8 @@ void *nc_file_dep_generate(const char *dir_path)
 			//}
 		}
 	}
-	temp_str = (char*)malloc(300);
-	memset(temp_str, 0, 300);
+	temp_str = (char*)malloc(1000);
+	memset(temp_str, 0, 1000);
 	for (i = 0; i < cfile_array->elmcount; i++)//初始化CFile树结构
 	{
 		((NC_CFile*)cfile_array->data[i])->lchild = (NC_CFile*)cfile_array->data[i];
@@ -118,10 +115,10 @@ void *nc_file_dep_generate(const char *dir_path)
 				temp_ptr = temp_ptr->rchild;
 			}
 		}
-	int flag_start = 0;
+	//int flag_start = 0;
 	for (i = 0; i < cfile_array->elmcount; i++)
 	{
-		flag_start = 0;
+		//flag_start = 0;
 		temp_ptr = (NC_CFile*)cfile_array->data[i];
 		if ((((NC_CFile*)cfile_array->data[i])->include_arr->elmcount) == 0)
 		{
@@ -138,12 +135,12 @@ void *nc_file_dep_generate(const char *dir_path)
 		printf("%d\n", (NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr);
 		printf("%d\n", ((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[flag_start]));
 		*/
-		temp_ptr->lchild = nc_filedep_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[flag_start])->name);//左孩子为第一个头文件
-		if (nc_filedep_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[flag_start])->name) == NULL)
+		temp_ptr->lchild = nc_filedep_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[0])->name);//左孩子为第一个头文件
+		if (nc_filedep_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[0])->name) == NULL)
 			continue;
 		temp_ptr->lchild->parent = temp_ptr;
 		temp_ptr = temp_ptr->lchild;
-		for (int j = flag_start+1; j < ((NC_CFile*)cfile_array->data[i])->include_arr->elmcount; j++)//剩下的头文件都是左孩子的右孩子链
+		for (int j = 1; j < ((NC_CFile*)cfile_array->data[i])->include_arr->elmcount; j++)//剩下的头文件都是左孩子的右孩子链
 		{
 			temp_ptr->rchild = nc_filedep_search(((NC_Include*)((NC_CFile*)cfile_array->data[i])->include_arr->data[j])->name);
 			if (temp_ptr->rchild == NULL)

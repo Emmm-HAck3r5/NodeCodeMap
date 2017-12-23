@@ -144,5 +144,5 @@ NC_CCompInfo* nc_ccompinfo_init(void);
 NC_CType* nc_ctype_init(void);
 NC_CVariable* nc_cvariable_init(void);
 NC_CFunction* nc_cfunction_init(void);
-NC_Include* nc_include_init();
+NC_Include* nc_include_init(void);
 #endif

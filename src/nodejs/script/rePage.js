@@ -37,7 +37,7 @@ function insertTabHTML(fileTag){
     // console.log('INSERT TAB!!');
     const tabHTML = `
         <li id="TAB-${fileTag}">
-            <a href="#CONTENT-${fileTag}" data-toggle="tab" class="tag">${fileTag}.cpp</a>
+            <a href="#CONTENT-${fileTag}" data-toggle="tab" class="tag" id="TAB-${fileTag}">${fileTag}.cpp</a>
             <a href="#" class="closebutton" id="RM-${fileTag}">&times;</a>    
         </li>`;
     $('.nav-tabs').append(tabHTML);
@@ -48,7 +48,7 @@ function insertTabHTML(fileTag){
             event.preventDefault();
             const fileId = $(event.target).attr('id').slice(4);
             $(`.tab-pane`).removeClass('show');
-            $(`#${fileId}`).addClass('show');
+            $(`#CONTENT-${fileId}`).addClass('show');
         });
     $(`#TAB-${fileTag} button`)
         .click(buttonRemoveEvent);
@@ -100,7 +100,8 @@ function removeSelf(thisFileTag){
 
 function showNext(nextFileTag){
     // console.log('show next?');
-    $(`#TAB-${nextFileTag} a`).tab('show');
+    $(`.tab-pane`).removeClass('show');
+    $(`#CONTENT-${nextFileTag}`).addClass('show');
 }
 // //
 
@@ -120,7 +121,8 @@ function insertContentHTML(fileTag, code){
 function pushAndShow(fileTag){
     // console.log('PUSH AND SHOW!!');
     pageArr.push(fileTag);
-    $(`#TAB-${fileTag} a`).tab('show');
+    $(`.tab-pane`).removeClass('show');
+    $(`#CONTENT-${fileTag}`).addClass('show');
     PR.prettyPrint();
 }
 

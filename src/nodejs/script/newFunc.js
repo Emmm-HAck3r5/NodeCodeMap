@@ -13,6 +13,7 @@ let transformRecord = {
 let svg = d3.select('svg')
     .attr('width', WIDTH)
     .attr('height', HEIGHT)
+    .attr('style', 'display: none')
     .on('dblclick', dblclicked);
 
 let simulation = d3.forceSimulation()
@@ -24,7 +25,6 @@ let color = d3.scaleOrdinal(d3.schemeCategory20);
 
 let dLinks, dNodes;
 
-d3.json('../public/fortest.json', treeInit);
 
 function dblclicked(){
     const nodes = svg.selectAll('circle');
@@ -255,6 +255,13 @@ function removeNetSimulation(nodes, links, codeNames){
 }
 
 var D3Svg = {};
+
+D3Svg.initSvg = function(jsonfile){
+    console.log('SVG INIT!');
+    console.log(jsonfile);
+    svg.attr('style', 'display: block');
+    d3.json('../public/fortest.json', treeInit);
+}
 
 D3Svg.resetSvg = function(){
     const nodes = svg.select('.nodes'),

@@ -1,4 +1,4 @@
-const ipcRenderer = require('electron').ipcRenderer;
+var ipcRenderer = require('electron').ipcRenderer;
 
 const nodes = svg.select('.nodes'),
     links = svg.select('.links'),
@@ -16,6 +16,13 @@ ipcRenderer.on('maximize', (event, size) => {
         .attr('height', window.screen.height)
         .attr('viewBox', `0 0 ${window.screen.width} ${window.screen.height}`);
 });
+
+// ipcRenderer.on('pythonDone', (event, jsonfile) => {
+//     console.log('PYTHON DONE! by ipcRenderer');
+//     console.log(jsonfile);
+//     D3Svg.initSvg(jsonfile);
+//     $('.searchbox').attr('style', 'display: none;');
+// });
 
 let ipcFunc = {};
 

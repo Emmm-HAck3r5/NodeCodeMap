@@ -4,7 +4,7 @@ const url = require('url');
 const exec = require('child_process').execSync;
 //菜单栏
 const {Menu} = require('electron');
-const {dialog} =require('electron');
+const {dialog} = require('electron');
 const {Tray} = require('electron');
 const menuTemplate = [
   {
@@ -13,7 +13,7 @@ const menuTemplate = [
       {
         label:'OpenDir',
         role: 'OpenDir',
-        click:function() {
+        click: function() {
           openDirectory();
         }
       },
@@ -38,14 +38,6 @@ const menuTemplate = [
 ]
 const menu = Menu.buildFromTemplate(menuTemplate);
 
-const pythonFile = '../python/global.py';
-try {
-  const pythonBuffer = exec(`python ${pythonFile}`);
-  console.log(pythonBuffer.toString());
-}
-catch(err){
-  console.log(err);
-}
 // 將這個 window 物件記在全域變數裡。
 // 如果你不這麼做，這個視窗在 JavaScript 物件被 GC 後就會被自動關閉。
 let win;
@@ -53,7 +45,7 @@ let win;
 // 這個方法在 Electron 初始化完成，準備好建立瀏覽器視窗時會被叫用。
 // 有些 API 只能在這個事件發生後才能用。
 app.on('ready', () => {
-  const appIcon=new Tray("F:\\Projects\\NodeCodeMap\\src\\nodejs\\resource\\favicon.ico");
+  const appIcon = new Tray("C:\\Users\\hotbr\\Desktop\\Projects\\NodeCodeMap\\src\\nodejs\\resource\\favicon.ico");
   Menu.setApplicationMenu(menu);
   createWindow();
 });
@@ -77,7 +69,21 @@ app.on('activate', () => {
 ipcMain.on('getWinSize', (event, arg ) => {
   const size = win.getSize();
   event.returnValue = size;
-})
+});
+
+ipcMain.on('getpath', (event, path) => {
+  const pythonFile = '../python/global.py';
+  try {
+    console.log(path);
+    event.returnValue = 'ulala.json';
+    // const pythonBuffer = exec(`python ${pythonFile} ${path}`);
+    // win.webContents.send('pythonDone', pythonBuffer.toString());
+  }
+  catch(err){
+    console.log(err);
+  }
+
+});
 
 function createWindow () {
   // 建立瀏覽器視窗。
@@ -117,7 +123,14 @@ function openDirectory() {
   dialog.showOpenDialog(
     {properties:['openDirectory']},
     function (dir) {
-      //todo 去解析文件夹
+      const pythonFile = '../python/global.py';
+      try {
+        const pythonBuffer = exec(`python ${pythonFile} ${dir}`);
+        win.webContents.send('pythonDone', pythonBuffer.toString());
+      }
+      catch(err){
+        console.log(err);
+      }
     }
   )
 }

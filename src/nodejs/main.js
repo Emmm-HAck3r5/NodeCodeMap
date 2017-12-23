@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, ipc} = require('electron');
 const path = require('path');
 const url = require('url');
 const exec = require('child_process').execSync;
@@ -49,12 +49,17 @@ function createWindow () {
   }));
 
   // 打開 DevTools。
-  //win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   // 視窗關閉時會觸發。
   win.on('closed', () => {
     // 拿掉 window 物件的參照。如果你的應用程式支援多個視窗，
     // 你可能會想存成陣列，現在該是時候清除相關的物件了。
     win = null;
+  });
+  win.on('resize', () => {
+    const size = win.getSize();
+    win.webContents.send('resize', size);
+    console.log(size);
   });
 }

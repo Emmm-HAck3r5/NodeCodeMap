@@ -2,6 +2,41 @@ const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const url = require('url');
 const exec = require('child_process').execSync;
+//菜单栏
+const {Menu} = require('electron');
+const {dialog} =require('electron');
+const {Tray} = require('electron');
+const menuTemplate = [
+  {
+    label: 'File',
+    submenu: [
+      {
+        label:'OpenDir',
+        role: 'OpenDir',
+        click:function() {
+          openDirectory();
+        }
+      },
+      {
+        label:'Exit',
+        role: 'Exit',
+        click:function(){
+          app.quit();
+        }
+      }
+    ]
+  },
+  {
+    label: 'Help',
+    submenu: [
+      {
+        label:'About',
+        role: 'About'
+      }
+    ]
+  }
+]
+const menu = Menu.buildFromTemplate(menuTemplate);
 
 const pythonFile = '../python/global.py';
 try {
@@ -17,7 +52,11 @@ let win;
 
 // 這個方法在 Electron 初始化完成，準備好建立瀏覽器視窗時會被叫用。
 // 有些 API 只能在這個事件發生後才能用。
-app.on('ready', createWindow);
+app.on('ready', () => {
+  const appIcon=new Tray("F:\\Projects\\NodeCodeMap\\src\\nodejs\\resource\\favicon.ico");
+  Menu.setApplicationMenu(menu);
+  createWindow();
+});
 
 // 在所有視窗都關閉時結束程式。
 app.on('window-all-closed', () => {
@@ -43,7 +82,8 @@ ipcMain.on('getWinSize', (event, arg ) => {
 function createWindow () {
   // 建立瀏覽器視窗。
   win = new BrowserWindow({
-    fullscreen: false
+    fullscreen: false,
+    icon:"F:\\Projects\\NodeCodeMap\\src\\nodejs\\resource\\favicon.ico"
   });
 
   // 並載入應用程式的 index.html。
@@ -72,4 +112,12 @@ function createWindow () {
     win.webContents.send('maximize', size);
     console.log('MAXIMIZE');
   })
+}
+function openDirectory() {
+  dialog.showOpenDialog(
+    {properties:['openDirectory']},
+    function (dir) {
+      //todo 去解析文件夹
+    }
+  )
 }

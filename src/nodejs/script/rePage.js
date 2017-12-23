@@ -37,18 +37,19 @@ function insertTabHTML(fileTag){
     // console.log('INSERT TAB!!');
     const tabHTML = `
         <li id="TAB-${fileTag}">
-            <a href="#CONTENT-${fileTag}" data-toggle="tab">${fileTag}.cpp</a>
-            <button type="button" class="close" id="RM-${fileTag}">&times;</button>    
+            <a href="#CONTENT-${fileTag}" data-toggle="tab" class="tag" id="TAB-${fileTag}">${fileTag}.cpp</a>
+            <a href="#" class="closebutton" id="RM-${fileTag}">&times;</a>    
         </li>`;
-    $('.nav-tabs').append(tabHTML);
+    $('.nav-tabs').prepend(tabHTML);
     $(`#TAB-${fileTag} a`)
-        .css('padding', '5px 5px')
         .click( (event) => {
             console.log('show?');
             event.preventDefault();
-            $(this).tab('show');
+            const fileId = $(event.target).attr('id').slice(4);
+            $(`.tab-pane`).removeClass('show');
+            $(`#CONTENT-${fileId}`).addClass('show');
         });
-    $(`#TAB-${fileTag} button`)
+    $(`#RM-${fileTag}`)
         .click(buttonRemoveEvent);
 }
 // // Remove Event
@@ -98,7 +99,8 @@ function removeSelf(thisFileTag){
 
 function showNext(nextFileTag){
     // console.log('show next?');
-    $(`#TAB-${nextFileTag} a`).tab('show');
+    $(`.tab-pane`).removeClass('show');
+    $(`#CONTENT-${nextFileTag}`).addClass('show');
 }
 // //
 
@@ -106,10 +108,10 @@ function insertContentHTML(fileTag, code){
     // console.log('INSERT CONTENT!!');
     let firstPageClass = '';
     if (pageArr.length === 0){
-        firstPageClass = 'in ';
+        firstPageClass = ' in';
     }
     const contentHTML = `
-        <div class="tab-pane fade ${firstPageClass}active" id="CONTENT-${fileTag}">
+        <div class="tab-pane fade" id="CONTENT-${fileTag}">
             <pre class="prettyprint">${code}</pre>
         </div>`;
     $('.tab-content').append(contentHTML);
@@ -119,7 +121,12 @@ function pushAndShow(fileTag){
     // console.log('PUSH AND SHOW!!');
     pageArr.push(fileTag);
     $(`#TAB-${fileTag} a`).tab('show');
+    //$(`.tab-pane`).removeClass('in');
+    //$(`.tab-pane`).removeClass('active');
+    //$(`#CONTENT-${fileTag}`).addClass('active');
+    //$(`#CONTENT-${fileTag}`).addClass('in');
     PR.prettyPrint();
 }
+
 
 // //

@@ -132,19 +132,17 @@ function addZoomEventListener(nodes, codeNames, links){
     svg.call(d3.zoom()
         .scaleExtent([0.1,10])
         .on('zoom', () => {
+            const t = d3.event.transform; // t is d3.event.transform for short
+            const transformSTYLE = `translate( ${t.x}, ${t.y})`;
             for(const selection of [nodes, codeNames, links]){
-                zoomTransition(selection, d3.event.transform);
+                zoomTransition(selection, transformSTYLE);
             }
             transformRecord = d3.event.transform;
             
-        })
-        .on('end', () => {
-            console.log('END ZOOM!');
-            console.log(`(${d3.event.transform.x}, ${d3.event.transform.y}, ${d3.event.transform.k})`);
-            console.log()
         }))
         .on('dblclick.zoom', null)
-        .on('dblclick.tap', null);
+        .on('dblclick.tap', null)
+        .on('wheel.zoom', null);
 }
 
 // the way of transition during zooming

@@ -38,11 +38,10 @@ function insertTabHTML(fileTag){
     const tabHTML = `
         <li id="TAB-${fileTag}">
             <a href="#CONTENT-${fileTag}" data-toggle="tab">${fileTag}.cpp</a>
-            <button type="button" class="close" id="RM-${fileTag}">&times;</button>    
+            <button type="button" class="closebutton" id="RM-${fileTag}">&times;</button>    
         </li>`;
     $('.nav-tabs').append(tabHTML);
     $(`#TAB-${fileTag} a`)
-        .css('padding', '5px 5px')
         .click( (event) => {
             console.log('show?');
             event.preventDefault();

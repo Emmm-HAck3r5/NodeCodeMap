@@ -46,7 +46,9 @@ function insertTabHTML(fileTag){
         .click( (event) => {
             console.log('show?');
             event.preventDefault();
-            $(this).tab('show');
+            const fileId = $(this).attr('id').slice(4);
+            $(`.tab-pane`).removeClass('show');
+            $(`#${fileId}`).addClass('show');
         });
     $(`#TAB-${fileTag} button`)
         .click(buttonRemoveEvent);
@@ -121,5 +123,6 @@ function pushAndShow(fileTag){
     $(`#TAB-${fileTag} a`).tab('show');
     PR.prettyPrint();
 }
+
 
 // //

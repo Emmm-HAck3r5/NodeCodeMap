@@ -51,10 +51,12 @@ void  nc_csign_parse(NC_File *fp, char c)
 			break;
 		case '}':
 			tk = nc_ctoken_generate(COP_RCB, NULL, current_lineno);
+			tk->file_pos = fp->file_ptr - 1;
 			nc_token_stream_add(tk);
 			break;
 		case ';':
 			tk = nc_ctoken_generate(COP_SEMICOLON, NULL, current_lineno);
+			tk->file_pos = fp->file_ptr - 1;
 			nc_token_stream_add(tk);
 			break;
 		case ',':

@@ -49,6 +49,7 @@ void nc_lex_init(void)
 void nc_lex_open(NC_File *fp)
 {
 	NC_CFile *newfile = nc_cfile_init(fp);
+	newfile->pfile = fp;
 	__EH_DLIST_ADD_TAIL(file_list, rchild, lchild, newfile);
 	eh_array_append(cfile_array, newfile);
 	token_stream = newfile->token_stream->stream;
@@ -162,6 +163,7 @@ int nc_analyze(NC_File *fp, u32 c)
 	static int is_line_link = false;
 	static int anno_type = -1;
 	int move_cursor = true;
+	static u32 pos = 0;
 	u32 token_type;
 	token_type = CTK_NULL;
 	current_token = NULL;
@@ -223,6 +225,7 @@ int nc_analyze(NC_File *fp, u32 c)
 			printf("error\n");
 		*/
 		nc_refresh_buffer(c);
+		pos = fp->file_ptr - 1;
 	}
 	else if (state == CLEX_IDENTIFIER)
 	{
@@ -350,16 +353,22 @@ int nc_analyze(NC_File *fp, u32 c)
 		if (token_type == CTK_IDENT&&(keyword_name=nc_is_keyword(buffer))!=0)
 		{
 			current_token = nc_ctoken_generate((CTokenType)keyword_name, NULL, current_lineno);
+			current_token->file_pos = pos;
+			pos = 0;
 			nc_token_stream_add(current_token);
 		}
 		else if (token_type == CTK_IDENT && (keyword_name = nc_is_prekeyword(buffer)) != 0)
 		{
 			current_token = nc_ctoken_generate((CTokenType)keyword_name, NULL, current_lineno);
+			current_token->file_pos = pos;
+			pos = 0;
 			nc_token_stream_add(current_token);
 		}
 		else
 		{
 			current_token = nc_ctoken_generate((CTokenType)token_type, buffer, current_lineno);
+			current_token->file_pos = pos;
+			pos = 0;
 			nc_token_stream_add(current_token);
 		}
 		if (token_type == CTK_ANNO)
@@ -377,6 +386,20 @@ void nc_analyze_token(NC_File *fp)
 		c = nc_getch(fp);
 		while (!nc_analyze(fp,c))
 		{ }
+	}
+}
+
+void nc_lex_test_print(NC_CTokenStream *ts)
+{
+	CToken *tk;
+	char *buf = (char*)malloc(sizeof(char) * 1000);
+	ts->pos = ts->stream;
+	fprintf(stderr, "Lex Debug Print:\n");
+	fprintf(stderr, "TokenType FilePos LineNo TokenValue\n");
+	while ((tk = nc_lex_get_token(ts))->token_type != CTK_ENDSYMBOL)
+	{
+		nc_print_token_type(tk->token_type);
+		fprintf(stderr, " %7d %6d %s\n", tk->file_pos, tk->lineno, eh_string_toasciistring(buf, tk->token_value));
 	}
 }
 

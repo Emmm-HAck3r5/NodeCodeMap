@@ -36,6 +36,7 @@ typedef struct NC_CFile
 	struct NC_CVariable *var_list;
 	struct NC_CMacro *macro_list;
 	struct NC_CType *type_list;
+	NC_File *pfile;
 	EH_Array *include_arr;
 }NC_CFile;
 
@@ -43,15 +44,16 @@ typedef struct NC_CTokenStream
 {
 	CToken *stream;
 	CToken *pos;
-}NC_CTokenStream;;
+	struct NC_CFile *file;
+}NC_CTokenStream;
 
 typedef struct NC_CCompInfo
 {
-	EH_String *file_data;
 	char *file_path;
 	EH_String *decl;
 	u32 lineno;
-	u32 pos;//�ñ������ڻ�ȡdecl���洢����ftell����ֵ
+	s64 begin_pos;//�ñ������ڻ�ȡdecl���洢����ftell����ֵ
+	s64 end_pos;
 }NC_CFileInfo;
 typedef enum NC_CTypeType
 {
@@ -71,7 +73,8 @@ typedef enum NC_CTypeModifier
 	NC_CTypeModifier_Extern = 0x4,
 	NC_CTypeModifier_Register = 0x8,
 	NC_CTypeModifier_Volatile = 0x10,
-	NC_CTypeModifier_Auto = 0x20
+	NC_CTypeModifier_Auto = 0x20,
+	NC_CTypeModifier_Typedef = 0x40
 }NC_CTypeModifier;
 typedef struct NC_CType
 {
@@ -86,7 +89,7 @@ typedef struct NC_CType
 typedef struct NC_CVariable
 {
 	struct NC_CVariable *next, *prev;
-	NC_CType var_type;
+	NC_CType *var_type;
 	EH_String *var_name;
 	NC_CCompInfo *comp_info;
 	u8 type_modifier;//�˴�constָָ���Ƿ���const
@@ -108,7 +111,7 @@ typedef struct NC_CFunction
 	EH_String *func_name;
 	NC_CCompInfo *comp_info;
 	u8 func_type;
-	NC_CType func_ret_type;
+	NC_CType *func_ret_type;
 	struct NC_CVariable *parameter;
 	EH_String *func_body;
 }NC_CFunction;
@@ -138,5 +141,8 @@ typedef struct NC_Include
 
 NC_CFile* nc_cfile_init(NC_File *fp);
 NC_CCompInfo* nc_ccompinfo_init(void);
-NC_Include* nc_include_init();
+NC_CType* nc_ctype_init(void);
+NC_CVariable* nc_cvariable_init(void);
+NC_CFunction* nc_cfunction_init(void);
+NC_Include* nc_include_init(void);
 #endif

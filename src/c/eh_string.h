@@ -43,6 +43,7 @@ typedef struct EH_String
 	int eh_string_ascii_compare(EH_String *str, const char *s);
 	int eh_string_compare(EH_String *str, EH_String *s);
 	int eh_string_findstr(EH_String *src, EH_String *tar);//返回tar在src中第一次出现的位置(从1开始记)，为0则未出现
+	int eh_string_cat(EH_String *out, EH_String *str);
 //#ifdef __cplusplus
 //}
 //#endif

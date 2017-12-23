@@ -38,7 +38,7 @@ app.on('activate', () => {
 function createWindow () {
   // 建立瀏覽器視窗。
   win = new BrowserWindow({
-    fullscreen: true
+    fullscreen: false
   });
 
   // 並載入應用程式的 index.html。
@@ -49,7 +49,7 @@ function createWindow () {
   }));
 
   // 打開 DevTools。
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   // 視窗關閉時會觸發。
   win.on('closed', () => {
@@ -60,6 +60,5 @@ function createWindow () {
   win.on('resize', () => {
     const size = win.getSize();
     win.webContents.send('resize', size);
-    console.log(size);
   });
 }

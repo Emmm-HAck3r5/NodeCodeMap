@@ -37,8 +37,8 @@ function insertTabHTML(fileTag){
     // console.log('INSERT TAB!!');
     const tabHTML = `
         <li id="TAB-${fileTag}">
-            <a href="#CONTENT-${fileTag}" data-toggle="tab">${fileTag}.cpp</a>
-            <button type="button" class="close" id="RM-${fileTag}">&times;</button>    
+            <a href="#CONTENT-${fileTag}" data-toggle="tab" class="tag">${fileTag}.cpp</a>
+            <a href="#" class="closebutton" id="RM-${fileTag}">&times;</a>    
         </li>`;
     $('.nav-tabs').append(tabHTML);
     $(`#TAB-${fileTag} a`)

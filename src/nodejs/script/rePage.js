@@ -42,7 +42,6 @@ function insertTabHTML(fileTag){
         </li>`;
     $('.nav-tabs').append(tabHTML);
     $(`#TAB-${fileTag} a`)
-        .css('padding', '5px 5px')
         .click( (event) => {
             console.log('show?');
             event.preventDefault();
@@ -107,12 +106,12 @@ function showNext(nextFileTag){
 
 function insertContentHTML(fileTag, code){
     // console.log('INSERT CONTENT!!');
-    let firstPageClass = '';
-    if (pageArr.length === 0){
-        firstPageClass = 'in ';
-    }
+    // let firstPageClass = '';
+    // if (pageArr.length === 0){
+    //     firstPageClass = 'in ';
+    // }
     const contentHTML = `
-        <div class="tab-pane fade ${firstPageClass}active" id="CONTENT-${fileTag}">
+        <div class="tab-pane" id="CONTENT-${fileTag}">
             <pre class="prettyprint">${code}</pre>
         </div>`;
     $('.tab-content').append(contentHTML);

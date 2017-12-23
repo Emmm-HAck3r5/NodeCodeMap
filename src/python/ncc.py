@@ -4,7 +4,7 @@ PACK NC_CSTUCT.SO
 import ctypes as ct
 print('NCC PACKING...')
 
-_path = ''
+_path = '../c/Dll6.dll'
 ncc = ct.cdll.LoadLibrary(_path)
 
 class NC_CFile(ct.Structure):
@@ -38,14 +38,15 @@ NC_CFile._fields_ = [("parent", ct.POINTER(NC_CFile)),
                     ("var_list", ct.POINTER(NC_CVariable)),
                     ("macro_list", ct.POINTER(NC_CMacro)),
                     ("type_list", ct.POINTER(NC_CType)),
+                    ("pfile", ct.POINTER(ct.c_void_p)),
                     ("include_arr", ct.POINTER(EH_Array))] # ? EH_Array is not defined
 
 NC_CTokenStream._fields_ = [("stream", ct.POINTER(CToken)), 
-                            ("pos", ct.POINTER(CToken))]
+                            ("pos", ct.POINTER(CToken)), 
+                            ("file", ct.POINTER(NC_CFile))]
 
 NC_CCompInfo._fields_ = [("file_data", ct.POINTER(EH_String)), # ? EH_String is not defined
                         ("file_path", ct.POINTER(ct.c_char)),
-                        ("file_name", ct.POINTER(ct.c_char)),
                         ("decl", ct.POINTER(EH_String)), # ? EH_String is not defined
                         ("lineno", c_uint), # u32
                         ("pos", c_uint)] # u32

@@ -39,6 +39,7 @@ void nc_refresh_buffer(u32 c);
 char nc_parse_tmchar(char c);
 int nc_analyze(NC_File *fp, u32 c);
 void nc_analyze_token(NC_File *fp);
+void nc_lex_test_print(NC_CTokenStream *ts);
 CToken* nc_lex_get_token(NC_CTokenStream *ts);
 void nc_lex_unget_token(NC_CTokenStream *ts);
 #endif

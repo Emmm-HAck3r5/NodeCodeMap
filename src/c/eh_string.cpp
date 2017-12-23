@@ -97,8 +97,10 @@ void eh_string_substr(EH_String *dest, EH_String *src, unsigned int begin, int e
 			if (dest)
 			{
 				dest->length = size - 1;
+				if (dest->buffersize < size)
+					eh_string_realloc(dest, size);
 				memcpy(dest->value, &(src->value[begin]), dest->length * sizeof(u32));
-				dest->value[dest->length] = '\0';
+				dest->value[size] = '\0';
 			}
 		}
 	}
@@ -127,6 +129,7 @@ int eh_string_ccopy(EH_String *dest, const char *src)
 		if (dest->value)
 			for (i = 0; i <= length; i++)
 				dest->value[i] = src[i];
+		dest->length = length;
 		return 1;
 	}
 	return -1;
@@ -153,7 +156,7 @@ char* eh_string_toasciistring(char *dest, EH_String *str)
 {
 	if (str)
 	{
-		dest = (char*)realloc(dest, (str->length) * sizeof(char));
+		dest = (char*)realloc(dest, (str->length + 1) * sizeof(char));
 		int i = 0;
 		for (i = 0; i < str->length; i++)
 		{
@@ -234,4 +237,14 @@ int eh_string_findstr(EH_String *src, EH_String *tar)//返回tar在src中第一�
         }
     }
     return -1;
+}
+int eh_string_cat(EH_String *out, EH_String *str)
+{
+	u32 newsize = out->length + str->length + 1;
+	if (out->buffersize < newsize)
+		eh_string_realloc(out, newsize);
+	memcpy(out->value + out->length, str->value, sizeof(u32)*str->length);
+	out->length += str->length;
+	out->value[out->length] = '\0';
+	return 0;
 }

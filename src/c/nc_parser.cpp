@@ -9,6 +9,7 @@ NC_CParseInfo* nc_cparse_info_init(void)
 	info->type_type = 0;
 	info->token_type = CTK_NULL;
 	info->dirty = 0;
+	info->pos = -1;
 	return info;
 }
 void nc_cparse_info_free(NC_CParseInfo *info)
@@ -16,11 +17,88 @@ void nc_cparse_info_free(NC_CParseInfo *info)
 	eh_string_free(info->buffer);
 	free(info);
 }
+
+int nc_check_preprocess(CToken *token)
+{
+	switch (token->token_type)
+	{
+	case CPKW_DEFINE:
+	case CPKW_DEFINED:
+	case CPKW_ELIF:
+	case CPKW_ELSE:
+	case CPKW_ENDIF:
+	case CPKW_ERROR:
+	case CPKW_IF:
+	case CPKW_IFDEF:
+	case CPKW_IFNDEF:
+	case CPKW_INCLUDE:
+	case CPKW_LINE:
+	case CPKW_PRAGMA:
+	case CPKW_UNDEF:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+void nc_type_specifier_to_string(EH_String *dest, NC_CParseInfo *info)
+{
+	switch (info->token_type)
+	{
+	case CKW_VOID:
+		eh_string_ccopy(dest, "void");
+		break;
+	case CKW_CHAR:
+		eh_string_ccopy(dest, "char");
+		break;
+	case CKW_SHORT:
+		eh_string_ccopy(dest, "short");
+		break;
+	case CKW_INT:
+		eh_string_ccopy(dest, "int");
+		break;
+	case CKW_LONG:
+		eh_string_ccopy(dest, "long");
+		break;
+	case CKW_FLOAT:
+		eh_string_ccopy(dest, "float");
+		break;
+	case CKW_DOUBLE:
+		eh_string_ccopy(dest, "double");
+		break;
+	case CKW_STRUCT:
+		eh_string_ccopy(dest, "struct");
+		eh_string_appendc(dest, ' ', 1);
+		eh_string_cat(dest, info->buffer);
+		break;
+	case CKW_UNION:
+		eh_string_ccopy(dest, "union");
+		eh_string_appendc(dest, ' ', 1);
+		eh_string_cat(dest, info->buffer);
+		break;
+	case CKW_ENUM:
+		eh_string_ccopy(dest, "enum");
+		eh_string_appendc(dest, ' ', 1);
+		eh_string_cat(dest, info->buffer);
+		break;
+	case CTK_IDENT:
+		eh_string_copy(dest, info->buffer);
+	}
+}
 void nc_parse_translation_unit(NC_CFile *file)
 {//parser入口
+	file->token_stream->file = file;
 	CToken *token;
 	while ((token = nc_lex_get_token(file->token_stream))->token_type != CTK_ENDSYMBOL)
 	{
+		//忽略预处理语句
+		if (nc_check_preprocess(token) == 1)
+		{
+			while ((token = nc_lex_get_token(file->token_stream))->token_type != COP_SEMICOLON)
+				;
+			nc_lex_get_token(file->token_stream);
+		}
+		nc_lex_unget_token(file->token_stream);
 		nc_parse_external_declaration(file);
 	}
 }
@@ -49,23 +127,32 @@ int nc_parse_declaration_specifier(NC_CTokenStream *tk_stream, NC_CParseInfo *in
 }
 int nc_parse_storage_class_specifier(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 {//解析存储类型说明符
-	CToken *token;
-	nc_lex_get_token(tk_stream);
+	CToken *token = nc_lex_get_token(tk_stream);
 	switch (token->token_type)
 	{
 	case CKW_AUTO:
+		if(info->pos<0)
+			info->pos = token->file_pos;
 		info->type_modifier |= NC_CTypeModifier_Auto;
 		return NC_PARSE_SUCCESS;
 	case CKW_REGISTER:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->type_modifier |= NC_CTypeModifier_Register;
 		return NC_PARSE_SUCCESS;
 	case CKW_STATIC:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->type_modifier |= NC_CTypeModifier_Static;
 		return NC_PARSE_SUCCESS;
 	case CKW_EXTERN:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->type_modifier |= NC_CTypeModifier_Extern;
 		return NC_PARSE_SUCCESS;
 	case CKW_TYPEDEF:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->type_modifier |= NC_CTypeModifier_Typedef;
 		return NC_PARSE_SUCCESS;
 	default:
@@ -81,36 +168,56 @@ int nc_parse_type_specifier(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 	switch (token->token_type)
 	{
 	case CKW_VOID:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->token_type = CKW_VOID;
 		return NC_PARSE_SUCCESS;
 	case CKW_CHAR:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->token_type = CKW_CHAR;
 		return NC_PARSE_SUCCESS;
 	case CKW_SHORT:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->token_type = CKW_SHORT;
 		return NC_PARSE_SUCCESS;
 	case CKW_INT:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->token_type = CKW_INT;
 		return NC_PARSE_SUCCESS;
 	case CKW_LONG:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->token_type = CKW_LONG;
 		return NC_PARSE_SUCCESS;
 	case CKW_FLOAT:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->token_type = CKW_FLOAT;
 		return NC_PARSE_SUCCESS;
 	case CKW_DOUBLE:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->token_type = CKW_DOUBLE;
 		return NC_PARSE_SUCCESS;
 	case CKW_STRUCT:
 	case CKW_UNION:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		//此处可能有新类型的定义，在此判断返回值，如果是新类型需要返回NC_PARSE_TYPE
 		nc_lex_unget_token(tk_stream);
 		return nc_parse_struct_or_union_specifier(tk_stream, info);
 	case CKW_ENUM:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		//此处可能有新类型的定义，在此判断返回值，如果是新类型需要返回NC_PARSE_TYPE
 		nc_lex_unget_token(tk_stream);
 		return nc_parse_enum_specifier(tk_stream, info);
 	case CTK_IDENT:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		//注意此时parseinfo的buffer已经脏了
 		//todo 添加typedef 支持
 		eh_string_copy(info->buffer, token->token_value);
@@ -128,9 +235,13 @@ int nc_parse_type_qualifier(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 	switch (token->token_type)
 	{
 	case CKW_CONST:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->type_modifier |= NC_CTypeModifier_Const;
 		return NC_PARSE_SUCCESS;
 	case CKW_VOLATILE:
+		if (info->pos<0)
+			info->pos = token->file_pos;
 		info->type_modifier |= NC_CTypeModifier_Volatile;
 		return NC_PARSE_SUCCESS;
 	default:
@@ -159,6 +270,8 @@ int nc_parse_struct_or_union_specifier(NC_CTokenStream *tk_stream, NC_CParseInfo
 		type->type_modifier = info->type_modifier;
 		type->type_type = info->type_type;
 		type->comp_info->lineno = token->lineno;
+		//文件位置
+		type->comp_info->begin_pos = info->pos;
 		eh_string_copy(type->type_name, info->buffer);
 		//创建type的成员链表
 		if (type->member == NULL)
@@ -174,7 +287,16 @@ int nc_parse_struct_or_union_specifier(NC_CTokenStream *tk_stream, NC_CParseInfo
 			nc_lex_unget_token(tk_stream);
 			fprintf(stderr, "nc_parse_struct_or_union_specifier error no rcb\n");
 		}
-		//todo 添加至file的type表
+		token = nc_lex_get_token(tk_stream);
+		if (token->token_type != COP_SEMICOLON)
+		{
+			nc_lex_unget_token(tk_stream);
+			fprintf(stderr, "nc_parse_struct_or_union_specifier error no sem\n");
+		}
+		//文件位置
+		type->comp_info->end_pos = token->file_pos;
+		//添加至file的type表
+		__EH_DLIST_ADD_TAIL(tk_stream->file->type_list, next, prev, type);
 		return NC_PARSE_TYPE;
 	}
 	else
@@ -210,8 +332,8 @@ int nc_parse_struct_declaration(NC_CTokenStream *tk_stream, NC_CType *type)
 	//更新parse信息
 	new_var->var_type->type_type = info->type_type;
 	new_var->var_type->type_modifier = info->type_modifier;
-	//todo 自定义类型信息
-	eh_string_copy(new_var->var_type->type_name, info->buffer);
+	//自定义类型信息
+	nc_type_specifier_to_string(new_var->var_type->type_name, info);
 	//销毁parseinfo
 	nc_cparse_info_free(info);
 	i = nc_parse_struct_declarator_list(tk_stream, new_var);
@@ -309,18 +431,42 @@ int nc_parse_declarator(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 					nc_lex_unget_token(tk_stream);
 				//创建新函数
 				NC_CFunction *func = nc_cfunction_init();
+				//文件位置
+				func->comp_info->begin_pos = info->pos;
 				eh_string_copy(func->func_name, tmp);
 				eh_string_free(tmp);
 				//从parseinfo获取返回值相关信息
-				//todo 从parseinfo的token_type转成func的ret_type->name
+				//从parseinfo的token_type转成func的ret_type->name
 				func->func_ret_type->type_type = info->type_type;
 				func->func_ret_type->type_modifier = info->type_modifier;
-				
+				nc_type_specifier_to_string(func->func_ret_type->type_name, info);
 				//进入形参表解析
 				//此时没有LPA
 				nc_parse_parameter_list(tk_stream, func);
-
-				//todo 添加至文件function表
+				//忽略函数体
+				token = nc_lex_get_token(tk_stream);
+				if (token->token_type == COP_LCB)
+				{
+					int stack = 1;//栈
+					while (stack>0)
+					{
+						token = nc_lex_get_token(tk_stream);
+						if (token->token_type == COP_RCB)
+							stack--;
+						else if (token->token_type == COP_LCB)
+							stack++;
+					}
+					//文件位置
+					func->comp_info->end_pos = token->file_pos;
+				}
+				else
+				{
+					nc_lex_unget_token(tk_stream);
+					fprintf(stderr, "nc_parse_declarator no lcb\n");
+					return NC_PARSE_FAILED;
+				}
+				//添加至文件function表
+				__EH_DLIST_ADD_TAIL(tk_stream->file->function_list, next, prev, func);
 				return NC_PARSE_FUNC;
 			}
 			else
@@ -339,20 +485,24 @@ int nc_parse_declarator(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 		else
 		{//变量，注意初始化语句的跳过
 			NC_CVariable *var = nc_cvariable_init();
+			//文件位置
+			var->comp_info->begin_pos = info->pos;
+
 			eh_string_copy(var->var_name, tmp);
 			eh_string_free(tmp);
 			//从parseinfo获取变量类型信息
 			var->var_type->type_modifier = info->type_modifier;
 			var->var_type->type_type = info->type_type;
-			//todo 自定义类型的获取
-			
-			token = nc_lex_get_token(tk_stream);
+			//自定义类型的获取
+			nc_type_specifier_to_string(var->var_type->type_name, info);
 			if (token->token_type == COP_ASSIGN)
 			{//跳过初始化语句
 				while ((token = nc_lex_get_token(tk_stream))->token_type != COP_SEMICOLON)
 					;
 				//把;吐出来 :P
-				nc_lex_unget_token(tk_stream);
+				//nc_lex_unget_token(tk_stream);
+				//文件位置
+				var->comp_info->end_pos = token->file_pos;
 			}
 			else if (token->token_type == COP_LBR)
 			{//数组
@@ -360,13 +510,21 @@ int nc_parse_declarator(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 				while ((token = nc_lex_get_token(tk_stream))->token_type != COP_SEMICOLON)
 					;
 				//把;吐出来 :P
-				nc_lex_unget_token(tk_stream);
+				//nc_lex_unget_token(tk_stream);
+				//文件位置
+				var->comp_info->end_pos = token->file_pos;
+			}
+			else if (token->token_type == COP_SEMICOLON)
+			{
+				//文件位置
+				var->comp_info->end_pos = token->file_pos;
 			}
 			else
 			{
 				nc_lex_unget_token(tk_stream);
 			}
-			//todo 将var添加到file的var表
+			//将var添加到file的var表
+			__EH_DLIST_ADD_TAIL(tk_stream->file->var_list, next, prev, var);
 			return NC_PARSE_VAR;
 		}
 	}
@@ -380,7 +538,7 @@ int nc_parse_pointer(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 	else
 	{
 		nc_lex_unget_token(tk_stream);
-		fprintf(stderr, "nc_parse_pointer error\n");//debug用
+		//fprintf(stderr, "nc_parse_pointer error\n");//debug用
 		return NC_PARSE_FAILED;
 	}
 	while ((token = nc_lex_get_token(tk_stream))->token_type == COP_STAR)
@@ -417,10 +575,11 @@ int nc_parse_parameter_declaration(NC_CTokenStream *tk_stream, NC_CFunction *fun
 	//读取parseinfo的类型信息
 	var->var_type->type_modifier = info->type_modifier;
 	var->var_type->type_type = info->type_type;
-	//todo 自定义类型的读取
-
+	//自定义类型的读取
+	nc_type_specifier_to_string(var->var_type->type_name, info);
 	nc_parse_abstract_declarator(tk_stream, var);
 	__EH_DLIST_ADD_TAIL(func->parameter, next, prev, var);
+	nc_cparse_info_free(info);
 	return NC_PARSE_SUCCESS;
 }
 int nc_parse_abstract_declarator(NC_CTokenStream *tk_stream, NC_CVariable *var)
@@ -443,6 +602,12 @@ int nc_parse_abstract_declarator(NC_CTokenStream *tk_stream, NC_CVariable *var)
 			while ((token = nc_lex_get_token(tk_stream))->token_type != COP_RBR)
 				;
 			return NC_PARSE_SUCCESS;
+		}
+		else
+		{
+			nc_lex_unget_token(tk_stream);
+			fprintf(stderr, "nc_parse_abstract_declarator error\n");
+			return NC_PARSE_FAILED;
 		}
 	}
 	else
@@ -475,6 +640,9 @@ int nc_parse_enum_specifier(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 		type->type_modifier = info->type_modifier;
 		type->type_type = info->type_type;
 		type->comp_info->lineno = token->lineno;
+		//文件位置
+		type->comp_info->begin_pos = info->pos;
+
 		eh_string_copy(type->type_name, info->buffer);
 		//创建type的成员链表
 		if (type->member == NULL)
@@ -490,7 +658,15 @@ int nc_parse_enum_specifier(NC_CTokenStream *tk_stream, NC_CParseInfo *info)
 			nc_lex_unget_token(tk_stream);
 			fprintf(stderr, "nc_parse_enum_specifier error no rcb\n");
 		}
-		//todo 添加至file的type表
+		token = nc_lex_get_token(tk_stream);
+		if (token->token_type != COP_SEMICOLON)
+		{
+			nc_lex_unget_token(tk_stream);
+			fprintf(stderr, "nc_parse_enum_specifier error no sem\n");
+		}
+		type->comp_info->end_pos = token->file_pos;
+		//添加至file的type表
+		__EH_DLIST_ADD_TAIL(tk_stream->file->type_list, next, prev, type);
 		return NC_PARSE_TYPE;
 	}
 	else
@@ -526,4 +702,70 @@ int nc_parse_enumerator_list(NC_CTokenStream *tk_stream, NC_CType *type)
 		}
 	}
 	return NC_PARSE_SUCCESS;
+}
+
+void nc_parse_get_decl(NC_CFile *file)
+{
+	NC_CVariable *var;
+	NC_CType *type;
+	NC_CFunction *func;
+	__EH_DLIST_FOREACH(file->type_list, next, type)
+	{
+		eh_string_substr(type->comp_info->decl, file->pfile->file,
+			type->comp_info->begin_pos, type->comp_info->end_pos);
+	}
+	__EH_DLIST_FOREACH(file->var_list, next, var)
+	{
+		eh_string_substr(var->comp_info->decl, file->pfile->file,
+			var->comp_info->begin_pos, var->comp_info->end_pos);
+	}
+	__EH_DLIST_FOREACH(file->function_list, next, func)
+	{
+		eh_string_substr(func->comp_info->decl, file->pfile->file,
+			func->comp_info->begin_pos, func->comp_info->end_pos);
+	}
+}
+void nc_parse_test(NC_CFile *file)
+{
+	NC_CVariable *var;
+	NC_CType *type;
+	NC_CFunction *func;
+	char *buf1 = (char*)malloc(sizeof(char) * 100);
+	char *buf2 = (char*)malloc(sizeof(char) * 100);
+	char *buf3 = (char*)malloc(sizeof(char) * 100);
+	fprintf(stderr, "Type:\n");
+	__EH_DLIST_FOREACH(file->type_list, next, type)
+	{
+		eh_string_toasciistring(buf1, type->type_name);
+		eh_string_toasciistring(buf3, type->comp_info->decl);
+		fprintf(stderr, "%s\n%s\n", buf1, buf3);
+	}
+	fprintf(stderr, "Var:\n");
+	__EH_DLIST_FOREACH(file->var_list, next, var)
+	{
+		eh_string_toasciistring(buf1, var->var_type->type_name);
+		eh_string_toasciistring(buf2, var->var_name);
+		eh_string_toasciistring(buf3, var->comp_info->decl);
+		fprintf(stderr, "%s %s\n%s\n", buf1, buf2, buf3);
+	}
+	fprintf(stderr, "Function:\n");
+	__EH_DLIST_FOREACH(file->function_list, next, func)
+	{
+		eh_string_toasciistring(buf1, func->func_ret_type->type_name);
+		eh_string_toasciistring(buf2, func->func_name);
+		fprintf(stderr, "%s %s(", buf1, buf2);
+		__EH_DLIST_FOREACH(func->parameter, next, var)
+		{
+			eh_string_toasciistring(buf1, var->var_type->type_name);
+			eh_string_toasciistring(buf2, var->var_name);
+			fprintf(stderr, "%s %s,", buf1, buf2);
+		}
+		fprintf(stderr, ")\n");
+		buf3 = eh_string_toasciistring(buf3, func->comp_info->decl);
+		fprintf(stderr, "%s\n", buf3);
+	}
+	fprintf(stderr, "Done!\n");
+	free(buf1);
+	free(buf2);
+	free(buf3);
 }

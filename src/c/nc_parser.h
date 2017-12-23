@@ -15,11 +15,14 @@ typedef struct NC_CParseInfo
 	u8 type_type;
 	u32 token_type;
 	u8 dirty;
+	s64 pos;
 }NC_CParseInfo;
 //注意对解析信息的复写
 
 NC_CParseInfo* nc_cparse_info_init(void);
 void nc_cparse_info_free(NC_CParseInfo* info);
+int nc_check_preprocess(CToken *token);
+void nc_type_specifier_to_string(EH_String *dest, NC_CParseInfo *info);
 //parser入口
 void nc_parse_translation_unit(NC_CFile *file);
 //parser核心逻辑
@@ -38,9 +41,8 @@ int nc_parse_pointer(NC_CTokenStream *tk_stream, NC_CParseInfo *info);
 int nc_parse_parameter_list(NC_CTokenStream *tk_stream, NC_CFunction *func);
 int nc_parse_parameter_declaration(NC_CTokenStream *tk_stream, NC_CFunction *func);
 int nc_parse_abstract_declarator(NC_CTokenStream *tk_stream, NC_CVariable *var);
-void nc_parse_direct_abstract_declarator(NC_CTokenStream *tk_stream, NC_CFunction *func);
 int nc_parse_enum_specifier(NC_CTokenStream *tk_stream, NC_CParseInfo *info);
 int nc_parse_enumerator_list(NC_CTokenStream *tk_stream, NC_CType *type);
-void nc_declaration(NC_CTokenStream *tk_stream, void *var);
-
+void nc_parse_get_decl(NC_CFile *file);
+void nc_parse_test(NC_CFile *file);
 #endif

@@ -12,13 +12,13 @@ NC_CFile* nc_cfile_init(NC_File *fp)
 	file->token_stream->stream = nc_ctoken_generate(CTK_NULL, NULL, 0);
 	file->token_stream->pos = file->token_stream->stream;
 	file->parent = NULL;
+	file->pfile = NULL;
 	__EH_DLIST_INIT(file->token_stream->stream, next, prev);
 	__EH_DLIST_INIT(file->var_list, next, prev);
 	__EH_DLIST_INIT(file->type_list, next, prev);
 	__EH_DLIST_INIT(file->macro_list, next, prev);
 	__EH_DLIST_INIT(file->function_list, next, prev);
 	//__EH_DLIST_INIT(file, rchild, lchild);
-	eh_string_copy(file->comp_info->file_data, fp->file);
 	strcpy(file->comp_info->file_path,fp->path);
 	file->include_arr = eh_array_init(300);
 	return file;
@@ -38,7 +38,6 @@ NC_CCompInfo* nc_ccompinfo_init(void)
 {
 	NC_CCompInfo *ci = (NC_CCompInfo*)malloc(sizeof(NC_CCompInfo));
 	ci->decl = eh_string_init(64);
-	ci->file_data = eh_string_init(128);
 	ci->file_path = (char*)malloc(1000);
 	memset(ci->file_path, 0, 1000);
 	return ci;

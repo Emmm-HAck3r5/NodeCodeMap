@@ -131,14 +131,15 @@ typedef struct CToken
 	CTokenType token_type;
 	EH_String *token_value;
 	u32 lineno;
+	u32 file_pos;
 }CToken;
 
 //#ifdef __cplusplus
 //extern "C" {
 //#endif
-	CToken* nc_ctoken_generate(CTokenType type, EH_String *val,u32 ln);
+	CToken* nc_ctoken_generate(CTokenType type, EH_String *val, u32 ln);
 	void nc_ctoken_destroy(CToken *tk);
-
+	void nc_print_token_type(u32 token_type);
 	extern CToken *current_token;
 //#ifdef __cplusplus
 //}

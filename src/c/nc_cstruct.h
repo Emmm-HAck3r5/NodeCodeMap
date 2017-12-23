@@ -36,6 +36,7 @@ typedef struct NC_CFile
 	struct NC_CVariable *var_list;
 	struct NC_CMacro *macro_list;
 	struct NC_CType *type_list;
+	NC_File *pfile;
 	EH_Array *include_arr;
 }NC_CFile;
 
@@ -43,15 +44,16 @@ typedef struct NC_CTokenStream
 {
 	CToken *stream;
 	CToken *pos;
-}NC_CTokenStream;;
+	struct NC_CFile *file;
+}NC_CTokenStream;
 
 typedef struct NC_CCompInfo
 {
-	EH_String *file_data;
 	char *file_path;
 	EH_String *decl;
 	u32 lineno;
-	u32 pos;//该变量用于获取decl，存储的是ftell返回值
+	s64 begin_pos;//该变量用于获取decl，存储的是ftell返回值
+	s64 end_pos;
 }NC_CFileInfo;
 typedef enum NC_CTypeType
 {

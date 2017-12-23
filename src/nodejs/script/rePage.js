@@ -99,8 +99,9 @@ function removeSelf(thisFileTag){
 
 function showNext(nextFileTag){
     // console.log('show next?');
-    $(`.tab-pane`).removeClass('show');
-    $(`#CONTENT-${nextFileTag}`).addClass('show');
+    // $(`.tab-pane`).removeClass('show');
+    // $(`#CONTENT-${nextFileTag}`).addClass('show');
+    $(`#TAB-${nextFileTag} a`).tab('show');
 }
 // //
 

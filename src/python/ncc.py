@@ -4,7 +4,7 @@ PACK NC_CSTUCT.SO
 import ctypes as ct
 print('NCC PACKING...')
 
-_path = '../c/Dll6.dll'
+_path = 'C:\\Users\\hotbr\\Desktop\\Projects\\NodeCodeMap\\src\\c\\Dll6.dll'
 ncc = ct.cdll.LoadLibrary(_path)
 
 class NC_CFile(ct.Structure):
@@ -54,7 +54,7 @@ NC_CCompInfo._fields_ = [("file_data", ct.POINTER(EH_String)), # ? EH_String is 
 NC_CType._fields_ = [("next", ct.POINTER(NC_CType)),
                     ("prev", ct.POINTER(NC_CType)),
                     ("type_type", c_ubyte), # u8
-                    ("name", ct.POINTER(EH_String)), # ? EH_String is not defined
+                    ("type_name", ct.POINTER(EH_String)), # ? EH_String is not defined
                     ("comp_info", ct.POINTER(NC_CCompInfo)),
                     ("type_modifier", c_ubyte),# u8
                     ("member", ct.POINTER(NC_CVariable))]
@@ -62,13 +62,13 @@ NC_CType._fields_ = [("next", ct.POINTER(NC_CType)),
 NC_CVariable._fields_ = [("next", ct.POINTER(NC_CVariable)),
                         ("prev", ct.POINTER(NC_CVariable)),
                         ("var_type", NC_CType), # self-defined class valid ?
-                        ("name", ct.POINTER(EH_String)), # ? EH_String is not defined
+                        ("var_name", ct.POINTER(EH_String)), # ? EH_String is not defined
                         ("comp_info", ct.POINTER(NC_CCompInfo)),
                         ("type_modifier", c_ubyte)] # u8
 
 NC_CFunction._fields_ = [("next", ct.POINTER(NC_CFunction)),
                         ("prev", ct.POINTER(NC_CFunction)),
-                        ("name", ct.POINTER(EH_String)), # ? EH_String is not defined
+                        ("func_name", ct.POINTER(EH_String)), # ? EH_String is not defined
                         ("comp_info", ct.POINTER(NC_CCompInfo)),
                         ("func_type", c_ubyte), # self-defined class valid ?
                         ("func_ret_type", NC_CType),
@@ -77,7 +77,7 @@ NC_CFunction._fields_ = [("next", ct.POINTER(NC_CFunction)),
 
 NC_CMacro._fields_ = [("next", ct.POINTER(NC_CMacro)),
                     ("prev", ct.POINTER(NC_CMacro)),
-                    ("name", ct.POINTER(EH_String)), # ? EH_String is not defined
+                    ("macro_name", ct.POINTER(EH_String)), # ? EH_String is not defined
                     ("comp_info", ct.POINTER(NC_CCompInfo)),
                     ("parameter", ct.POINTER(EH_String)), # ? EH_String is not defined
                     ("after_expand", ct.POINTER(EH_String)), # ? EH_String is not defined
@@ -94,9 +94,10 @@ EH_Array._fields_ = [("elmcount", ct.c_int),
                     ("data", ct.POINTER(ct.POINTER))]
 
 CToken._fields_ = [("next", ct.POINTER(CToken)),
-                ("prev", ct.POINTER(CToken),
+                ("prev", ct.POINTER(CToken)),
                 ("CToken", ct.POINTER(EH_String)),
-                ("lineno", c_uint32)]
+                ("lineno", c_uint32),
+                ("file_pos", c_uint32)]
 
 # parse
 parse = ncc.parse

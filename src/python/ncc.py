@@ -7,11 +7,6 @@ print('NCC PACKING...')
 _path = ''
 ncc = ct.cdll.LoadLibrary(_path)
 
-# parse
-parse = ncc.parse
-parse.argtypes = (c_wchar_p)
-parse.restype = ct.POINTER(NC_File)
-
 class NC_CFile(ct.Structure):
     pass
 class NC_CTokenStream(ct.Structure):
@@ -101,3 +96,8 @@ CToken._fields_ = [("next", ct.POINTER(CToken)),
                 ("prev", ct.POINTER(CToken),
                 ("CToken", ct.POINTER(EH_String)),
                 ("lineno", c_uint32)]
+
+# parse
+parse = ncc.parse
+parse.argtypes = (c_wchar_p)
+parse.restype = ct.POINTER(NC_File)

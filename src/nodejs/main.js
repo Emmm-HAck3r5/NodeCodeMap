@@ -45,7 +45,7 @@ let win;
 // 這個方法在 Electron 初始化完成，準備好建立瀏覽器視窗時會被叫用。
 // 有些 API 只能在這個事件發生後才能用。
 app.on('ready', () => {
-  const appIcon = new Tray("C:\\Users\\hotbr\\Desktop\\Projects\\NodeCodeMap\\src\\nodejs\\resource\\favicon.ico");
+  //const appIcon = new Tray("C:\\Users\\hotbr\\Desktop\\Projects\\NodeCodeMap\\src\\nodejs\\resource\\favicon.ico");
   Menu.setApplicationMenu(menu);
   createWindow();
 });
@@ -88,8 +88,8 @@ ipcMain.on('getpath', (event, path) => {
 function createWindow () {
   // 建立瀏覽器視窗。
   win = new BrowserWindow({
-    fullscreen: false,
-    icon:"F:\\Projects\\NodeCodeMap\\src\\nodejs\\resource\\favicon.ico"
+    fullscreen: false
+    //icon:"F:\\Projects\\NodeCodeMap\\src\\nodejs\\resource\\favicon.ico"
   });
 
   // 並載入應用程式的 index.html。
@@ -134,3 +134,9 @@ function openDirectory() {
     }
   )
 }
+
+ipcMain.on('askforopendialog',function(event,arg)
+{
+  event.returnValue='ok';
+  openDirectory();
+})

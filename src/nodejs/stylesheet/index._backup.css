@@ -4,7 +4,7 @@
  * Email: easyai@outlook.com
  * Created Date: 2017-12-23 15:49:53
  * ------
- * Last Modified: 2017-12-24 06:54:22
+ * Last Modified: 2017-12-24 06:02:03
  * Modified By: EasyAI ( easyai@outlook.com )
  */
  /*在index.html的最后加载该css*/
@@ -12,7 +12,7 @@
     height:100%;
 }
 body {
-    background-color: rgb(31, 31, 31);
+    background-color: white;
     font-family: "Microsoft JhengHei";
     height:100%;
     padding: 0%;
@@ -25,7 +25,7 @@ body {
 a {
     float: left; }
 .links line {
-    stroke: rgb(255, 255, 255);
+    stroke: black;
     stroke-opacity: 0.8; 
 }
       
@@ -40,7 +40,7 @@ svg {
 /*代码页*/
 div.codePage {
     position: absolute;
-    background-color: rgb(214, 214, 214);
+    background-color: rgb(31,31,31);
     right:0;
     top:0;
     display: none;
@@ -56,7 +56,7 @@ div.tab-pane{
 }
 div.tab-content{
     height:93%;
-    background-color: rgb(212, 212, 212);
+    background-color: rgb(246,246,179);
 }
 ul.nav-tabs{
     height:7%;
@@ -65,18 +65,18 @@ ul.nav-tabs{
 ::-webkit-scrollbar{
     width: 10px;
     height: 10px;
-    background-color: rgb(37, 37, 37);
+    background-color: rgb(216, 212, 212);
 }
 ::-webkit-scrollbar-track{
-    background-color: rgb(182, 182, 182);
+    background-color: rgb(255, 255, 255);
 }
 ::-webkit-scrollbar-thumb{
     border-radius: 10px;
-    background-color: rgb(99, 99, 99);
+    background-color: rgb(105, 105, 105);
 }
 ::-webkit-scrollbar-button{
     height: 10px;
-    background-color: rgb(182, 182, 182);
+    background-color: rgb(202, 159, 94);
 }
 ul.nav-tabs {
     list-style-type:none;
@@ -85,7 +85,7 @@ ul.nav-tabs {
     border-radius: 5px;
     margin: 0;
     padding: 0;
-    background-color: rgb(43, 43, 43);
+    background-color: rgb(246,246,179);
     width: 100%;
     overflow-x:scroll;
 }
@@ -93,41 +93,40 @@ ul.nav-tabs li {
     list-style:none;
     display:inline-block;
     border-radius: 5px;
-    border:1.5px solid rgb(83, 83, 83);
+    border:1.5px solid rgb(218, 184, 127);
 }
 
 ul.nav-tabs li a {
     position: relative;
     display: block;
-    background-color: rgb(95, 91, 91);
-    color:rgb(223, 223, 223);
+    background-color: rgb(238, 238, 238);
+    color:rgb(65, 64, 64);
     text-align: center;
     padding:5px 5px;
     border:2px;
     border-radius:5px;
     text-decoration: none;
-    border:1px solid rgb(223, 223, 223);
 }
 
 ul.nav-tabs li a.tag:hover {
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(217,238,248);
+    color:rgb(24, 24, 24);
 }
 ul.nav-tabs li.active>a {
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(217,238,248);
+    color:rgb(24, 24, 24);
 }
 ul.nav-tabs li a.tag:focus{
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(217,238,248);
+    color:rgb(24, 24, 24);
 }
 ul.nav-tabs li a.tag:hover+a {
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(217,238,248);
+    color:rgb(24, 24, 24);
 }
 ul.nav-tabs li a.tag:focus+a{
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(217,238,248);
+    color:rgb(24, 24, 24);
 }
 
 div.tab-content div.tab-pane{
@@ -136,7 +135,7 @@ div.tab-content div.tab-pane{
 
 div.tab-content div.fade{
     opacity:0;
-    transition:opacity 0.5s linear;
+    transition:opacity 1s linear;
 }
 div.tab-content div.active{
     display:block;
@@ -147,33 +146,11 @@ div.tab-content div.in{
 div.tab-content pre{
     overflow-x:scroll;
     overflow-y:scroll;
-    background-color: rgb(34, 34, 34)
 }
 div.navbar-container{
     width:100%;
 }
 
-div.tab-content pre span.com{
-    color: rgb(180, 180, 180)
-}
-div.tab-content pre span.pun{
-    color: rgb(80, 199, 80)
-}
-div.tab-content pre span.kwd{
-    color: rgb(65, 121, 224)
-}
-div.tab-content pre span.typ{
-    color: rgb(53, 138, 31)
-}
-div.tab-content pre span.str{
-    color: rgb(158, 236, 255)
-}
-div.tab-content pre span.lit{
-    color: rgb(179, 179, 179)
-}
-div.tab-content pre span.pln{
-    color: rgb(255, 255, 255)
-}
 /*搜索框*/
 div.search-container{
     position: absolute;
@@ -183,21 +160,21 @@ div.search-container{
 }
 div.search-container a#open-dialog{
     text-decoration: none;
-    color:rgb(255, 255, 255);
+    color:rgb(0,0,0);
     margin-right:2px;
 }
 div.search-container a#open-dialog:hover{
     text-decoration: none;
-    color:rgb(255, 253, 253);
+    color:rgb(160, 158, 158);
 }
 div.search-container a#submit{
     text-decoration: none;
-    color:rgb(255, 255, 255);
+    color:rgb(0,0,0);
     margin-left:2px;
 }
 div.search-container a#submit:hover{
     text-decoration: none;
-    color:rgb(255, 255, 255);
+    color:rgb(160, 158, 158);
 }
 div.search-container input{
     float:left;
@@ -208,5 +185,4 @@ div.search-container i{
 }
 div.search-container p{
     margin-bottom:4px;
-    color:rgb(255, 255, 255);
 }

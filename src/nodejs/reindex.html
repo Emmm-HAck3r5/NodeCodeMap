@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>NodeCodeMap</title>
     <link rel="stylesheet" type="text/css" href="stylesheet/index-sheet.css"/>
+    <link rel="stylesheet" type="text/css" href="stylesheet/font-awesome.min.css"/>
     <!-- <link rel="stylesheet" type="text/css" href="stylesheet/bootstrap.css"/> -->
     <link rel="stylesheet" type="text/css" href="stylesheet/prettify.css">
     <link rel="stylesheet" type="text/css" href="stylesheet/index.css"/>
@@ -16,9 +17,12 @@
 
   </head>
   <body onload="PR.prettyPrint()">
-    <form>
+    <div class="search-container">
+      <p>Open a project directory:</p>
+      <a href="#" id="open-dialog"><i class="fa fa-files-o" aria-hidden="true"></i></a>
         <input type="text" name="filePath" class="searchbox" value="" placeholder="PROJECT FOLDER PATH">
-    </form>
+        <a href="#" id="submit"><i class="fa fa-search" aria-hidden="true"></i></a>
+      </div>
     <svg></svg>
     <div class='codePage'>
         <div class="navbar-container"><ul class="nav nav-tabs"></ul></div>

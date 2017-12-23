@@ -14,6 +14,6 @@
 #include "nc_io.h"
 #include "eh_typedef.h"
 #include "nc_clex.h"
-_Bool nc_c_is_sign(char c);
+int nc_c_is_sign(char c);
 void  nc_csign_parse(NC_File *fp,char c);
 #endif

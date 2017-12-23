@@ -40,4 +40,12 @@
 			break;\
 	if(__ret__==__list__) __ret__=NULL;\
 }
+
+//要求dest头结点不存储信息，src头结点存储信息,src会接在dest的尾部
+#define __EH_DLIST_COMBINE_SPC(__dest__,__src__,__mnext1__,__mprev1__,__mnext2__,__mprev2__) {\
+	(__dest__)->__mprev1__->__mnext1__=__src__;\
+	(__src__)->__mnext2__=(__dest__)->__mprev1__;\
+	(__dest__)->__mprev1__=(__src__)->__mprev2__;\
+	(__src__)->__mprev2__->__mnext2__=(__dest__);\
+}
 #endif

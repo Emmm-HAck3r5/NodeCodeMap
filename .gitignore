@@ -1,3 +1,4 @@
 src/nodejs/node_modules
 src/nodejs/.jshintrc
 .vscode
+src/python/__pycache__

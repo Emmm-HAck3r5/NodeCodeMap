@@ -195,7 +195,10 @@ function clicked(data){
     for(const selection of [nodes, codeNames, links]){
         zoomTransition(selection, transformSTYLE);
     }
-    svg.attr('width', WIDTH / 2);
+    const size = ipcFunc.getWinSize();
+    
+    svg.attr('width', size[0] / 2)
+        .attr('viewBox', `0 0 ${size[0]/2} ${size[1]}`);
     d3.select('.codePage').attr('style', 'display: inline');
     simulation.velocityDecay(0.6);
     CodePage.loadCode(undefined, data.id);
@@ -263,5 +266,7 @@ D3Svg.resetSvg = function(){
     }
     d3.select('.codePage').attr('style', 'display: none');
     simulation.velocityDecay(0.2);
-    svg.attr('width', WIDTH);
+
+    const size = ipcFunc.getWinSize();
+    svg.attr('width', size[0]);
 };

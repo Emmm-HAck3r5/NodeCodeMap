@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipc} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const url = require('url');
 const exec = require('child_process').execSync;
@@ -35,6 +35,11 @@ app.on('activate', () => {
   }
 });
 
+ipcMain.on('getWinSize', (event, arg ) => {
+  const size = win.getSize();
+  event.returnValue = size;
+})
+
 function createWindow () {
   // 建立瀏覽器視窗。
   win = new BrowserWindow({
@@ -48,6 +53,8 @@ function createWindow () {
     slashes: true
   }));
 
+  const size = win.getSize();
+
   // 打開 DevTools。
   win.webContents.openDevTools();
 
@@ -58,8 +65,11 @@ function createWindow () {
     win = null;
   });
   win.on('resize', () => {
-    const size = win.getSize();
     win.webContents.send('resize', size);
     console.log(size);
   });
+  win.on('maximize', () => {
+    win.webContents.send('maximize', size);
+    console.log('MAXIMIZE');
+  })
 }

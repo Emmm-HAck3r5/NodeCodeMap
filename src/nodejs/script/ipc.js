@@ -17,12 +17,12 @@ ipcRenderer.on('maximize', (event, size) => {
         .attr('viewBox', `0 0 ${window.screen.width} ${window.screen.height}`);
 });
 
-// ipcRenderer.on('pythonDone', (event, jsonfile) => {
-//     console.log('PYTHON DONE! by ipcRenderer');
-//     console.log(jsonfile);
-//     D3Svg.initSvg(jsonfile);
-//     $('.searchbox').attr('style', 'display: none;');
-// });
+ipcRenderer.on('pythonDone', (event, jsonfile) => {
+    console.log('PYTHON DONE! by ipcRenderer');
+    console.log(jsonfile);
+    D3Svg.initSvg(jsonfile);
+    $('.searchbox').attr('style', 'display: none;');
+});
 
 let ipcFunc = {};
 

@@ -72,12 +72,13 @@ ipcMain.on('getWinSize', (event, arg ) => {
 });
 
 ipcMain.on('getpath', (event, path) => {
-  const pythonFile = '../python/global.py';
+  const pythonFile = 'D:\\Emmm_HAck3r5\\NCM_release\\py\\global.py';
   try {
-    console.log(path);
-    event.returnValue = 'ulala.json';
-    // const pythonBuffer = exec(`python ${pythonFile} ${path}`);
-    // win.webContents.send('pythonDone', pythonBuffer.toString());
+    // console.log(path);
+    // event.returnValue = 'ulala.json';
+    const pythonBuffer = exec(`python ${pythonFile} ${path}`);
+    console.log(pythonBuffer.toString())
+    win.webContents.send('pythonDone', pythonBuffer.toString());
   }
   catch(err){
     console.log(err);

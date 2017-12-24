@@ -260,7 +260,7 @@ D3Svg.initSvg = function(jsonfile){
     console.log('SVG INIT!');
     console.log(jsonfile);
     svg.attr('style', 'display: block');
-    d3.json('../public/fortest.json', treeInit);
+    d3.json(jsonfile, treeInit);
 }
 
 D3Svg.resetSvg = function(){

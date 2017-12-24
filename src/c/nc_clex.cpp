@@ -43,15 +43,19 @@ void nc_token_stream_add(CToken *tk)
 }
 void nc_lex_init(void)
 {
-	file_list = (NC_CFile*)malloc(sizeof(NC_CFile));
+	file_list = nc_cfile_init(NULL);
 	__EH_DLIST_INIT(file_list, rchild, lchild);
 }
 void nc_lex_open(NC_File *fp)
 {
 	NC_CFile *newfile = nc_cfile_init(fp);
+	//printf("nf_%s\n",newfile->comp_info->file_path);
 	newfile->pfile = fp;
 	__EH_DLIST_ADD_TAIL(file_list, rchild, lchild, newfile);
+	//printf("nf_%s\n", file_list->rchild->comp_info->file_path);
 	eh_array_append(cfile_array, newfile);
+	//printf("nf_%s\n", ((NC_CFile*)cfile_array->data[cfile_array->elmcount-1])->comp_info->file_path);
+	//printf("nf_%d\n", ((NC_CFile*)cfile_array->data[cfile_array->elmcount - 1])->file_type);
 	token_stream = newfile->token_stream->stream;
 	current_lineno = 0;
 	current_token = NULL;

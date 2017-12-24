@@ -100,11 +100,13 @@ void *nc_file_dep_generate(const char *dir_path)
 	NC_CFile *temp_ptr;
 	bool is_1st_c=true;
 	for (i = 0; i < cfile_array->elmcount; i++)
+		//printf("%d\n", ((NC_CFile*)cfile_array->data[i]));
 		if (((NC_CFile*)cfile_array->data[i])->file_type == NC_CFile_C)
 		{
 			if (is_1st_c)
 			{
 				file_list = (NC_CFile*)cfile_array->data[i];
+				//printf("_1_");
 				is_1st_c = false;
 				temp_ptr = file_list;
 			}

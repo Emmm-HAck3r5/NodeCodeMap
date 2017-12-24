@@ -3,10 +3,10 @@
 NC_CFile* nc_cfile_init(NC_File *fp)
 {
 	NC_CFile *file = (NC_CFile*)malloc(sizeof(NC_CFile));
-	file->function_list =(NC_CFunction*)malloc(sizeof(NC_CFunction));
-	file->macro_list = (NC_CMacro*)malloc(sizeof(NC_CMacro));
-	file->type_list = (NC_CType*)malloc(sizeof(NC_CType));
-	file->var_list = (NC_CVariable*)malloc(sizeof(NC_CVariable));
+	file->function_list = nc_cfunction_init();
+	file->macro_list = NULL;
+	file->type_list = nc_ctype_init();
+	file->var_list = nc_cvariable_init();
 	file->comp_info = nc_ccompinfo_init();
 	file->token_stream = (NC_CTokenStream*)malloc(sizeof(NC_CTokenStream));
 	file->token_stream->stream = nc_ctoken_generate(CTK_NULL, NULL, 0);
@@ -16,10 +16,11 @@ NC_CFile* nc_cfile_init(NC_File *fp)
 	__EH_DLIST_INIT(file->token_stream->stream, next, prev);
 	__EH_DLIST_INIT(file->var_list, next, prev);
 	__EH_DLIST_INIT(file->type_list, next, prev);
-	__EH_DLIST_INIT(file->macro_list, next, prev);
+	//__EH_DLIST_INIT(file->macro_list, next, prev);
 	__EH_DLIST_INIT(file->function_list, next, prev);
 	//__EH_DLIST_INIT(file, rchild, lchild);
-	strcpy(file->comp_info->file_path,fp->path);
+	if(fp)
+		strcpy(file->comp_info->file_path,fp->path);
 	file->include_arr = eh_array_init(300);
 	return file;
 }

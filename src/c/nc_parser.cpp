@@ -92,11 +92,11 @@ void nc_parse_translation_unit(NC_CFile *file)
 	while ((token = nc_lex_get_token(file->token_stream))->token_type != CTK_ENDSYMBOL)
 	{
 		//ºöÂÔÔ¤´¦ÀíÓï¾ä
-		if (nc_check_preprocess(token) == 1)
+		while (nc_check_preprocess(token) == 1)
 		{
-			while ((token = nc_lex_get_token(file->token_stream))->token_type != COP_SEMICOLON)
-				;
-			nc_lex_get_token(file->token_stream);
+			while((token = nc_lex_get_token(file->token_stream))->token_type!=COP_SEMICOLON)
+			;
+			token = nc_lex_get_token(file->token_stream);
 		}
 		nc_lex_unget_token(file->token_stream);
 		nc_parse_external_declaration(file);

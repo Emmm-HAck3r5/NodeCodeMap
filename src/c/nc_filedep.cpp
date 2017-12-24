@@ -35,7 +35,7 @@ NC_CFile *nc_filedep_search(char *name)//查找文件
 //若父亲是自己，说明为根节点
 //若某一孩子为自己，说明没有这个孩子
 //暂不支持出现不同目录拥有同名文件
-void *nc_file_dep_generate(const char *dir_path)
+void nc_file_dep_generate(const char *dir_path)
 {
 	EH_Array *file_array_path = eh_array_init(300);//储存所有文件路径的数组
 	//EH_Array *cfile_array = eh_array_init(300);
@@ -206,6 +206,6 @@ void *nc_file_dep_generate(const char *dir_path)
 			flag = 0;
 		}
 	}*/
-	return 0;
+	return;
 }
 

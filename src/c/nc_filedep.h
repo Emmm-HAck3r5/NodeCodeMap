@@ -11,7 +11,7 @@
 #define NC_STD 1
 #define NC_CST 2
 
-void *nc_file_dep_generate(const char *dir_path);
+void nc_file_dep_generate(const char *dir_path);
 NC_CFile *nc_filedep_search(char *name);
 char *nc_filedep_getname(char *path);
 

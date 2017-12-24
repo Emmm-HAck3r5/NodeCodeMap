@@ -43,7 +43,7 @@ void nc_token_stream_add(CToken *tk)
 }
 void nc_lex_init(void)
 {
-	file_list = (NC_CFile*)malloc(sizeof(NC_CFile));
+	file_list = nc_cfile_init(NULL);
 	__EH_DLIST_INIT(file_list, rchild, lchild);
 }
 void nc_lex_open(NC_File *fp)

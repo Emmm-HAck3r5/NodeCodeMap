@@ -4,7 +4,7 @@
  * Email: easyai@outlook.com
  * Created Date: 2017-12-23 15:49:53
  * ------
- * Last Modified: 2017-12-24 06:54:22
+ * Last Modified: 2017-12-24 09:52:45
  * Modified By: EasyAI ( easyai@outlook.com )
  */
  /*在index.html的最后加载该css*/
@@ -12,7 +12,7 @@
     height:100%;
 }
 body {
-    background-color: rgb(31, 31, 31);
+    background-color: rgb(240, 240, 240);
     font-family: "Microsoft JhengHei";
     height:100%;
     padding: 0%;
@@ -25,7 +25,7 @@ body {
 a {
     float: left; }
 .links line {
-    stroke: rgb(255, 255, 255);
+    stroke: rgb(117, 117, 117);
     stroke-opacity: 0.8; 
 }
       
@@ -40,7 +40,7 @@ svg {
 /*代码页*/
 div.codePage {
     position: absolute;
-    background-color: rgb(214, 214, 214);
+    background-color: rgb(255, 246, 232);
     right:0;
     top:0;
     display: none;
@@ -56,7 +56,7 @@ div.tab-pane{
 }
 div.tab-content{
     height:93%;
-    background-color: rgb(212, 212, 212);
+    background-color: rgb(255, 242, 224);
 }
 ul.nav-tabs{
     height:7%;
@@ -85,7 +85,7 @@ ul.nav-tabs {
     border-radius: 5px;
     margin: 0;
     padding: 0;
-    background-color: rgb(43, 43, 43);
+    background-color: rgb(253, 244, 194);
     width: 100%;
     overflow-x:scroll;
 }
@@ -93,45 +93,46 @@ ul.nav-tabs li {
     list-style:none;
     display:inline-block;
     border-radius: 5px;
-    border:1.5px solid rgb(83, 83, 83);
+    border:1.5px solid rgb(240, 152, 52);
 }
 
 ul.nav-tabs li a {
     position: relative;
     display: block;
-    background-color: rgb(95, 91, 91);
-    color:rgb(223, 223, 223);
+    background-color: rgb(250, 252, 153);
+    color:rgb(26, 102, 138);
     text-align: center;
     padding:5px 5px;
     border:2px;
     border-radius:5px;
     text-decoration: none;
-    border:1px solid rgb(223, 223, 223);
+    border:1px solid rgb(135, 253, 155);
 }
 
 ul.nav-tabs li a.tag:hover {
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(247, 181, 105);
+    color:rgb(8, 54, 139);
 }
 ul.nav-tabs li.active>a {
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(247, 181, 105);
+    color:rgb(8, 54, 139);
 }
 ul.nav-tabs li a.tag:focus{
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(247, 181, 105);
+    color:rgb(8, 54, 139);
 }
 ul.nav-tabs li a.tag:hover+a {
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(247, 181, 105);
+    color:rgb(8, 54, 139);
 }
 ul.nav-tabs li a.tag:focus+a{
-    background-color: rgb(145, 139, 139);
-    color:rgb(255, 255, 255);
+    background-color: rgb(247, 181, 105);
+    color:rgb(8, 54, 139);
 }
 
 div.tab-content div.tab-pane{
     display:none;
+    font-size:1.2em;
 }
 
 div.tab-content div.fade{
@@ -147,7 +148,7 @@ div.tab-content div.in{
 div.tab-content pre{
     overflow-x:scroll;
     overflow-y:scroll;
-    background-color: rgb(34, 34, 34)
+    background-color: rgb(253, 244, 194)
 }
 div.navbar-container{
     width:100%;
@@ -172,7 +173,7 @@ div.tab-content pre span.lit{
     color: rgb(179, 179, 179)
 }
 div.tab-content pre span.pln{
-    color: rgb(255, 255, 255)
+    color: rgb(0, 0, 0)
 }
 /*搜索框*/
 div.search-container{
@@ -183,21 +184,21 @@ div.search-container{
 }
 div.search-container a#open-dialog{
     text-decoration: none;
-    color:rgb(255, 255, 255);
+    color:rgb(0, 0, 0);
     margin-right:2px;
 }
 div.search-container a#open-dialog:hover{
     text-decoration: none;
-    color:rgb(255, 253, 253);
+    color:rgb(110, 110, 110);
 }
 div.search-container a#submit{
     text-decoration: none;
-    color:rgb(255, 255, 255);
+    color:rgb(0, 0, 0);
     margin-left:2px;
 }
 div.search-container a#submit:hover{
     text-decoration: none;
-    color:rgb(255, 255, 255);
+    color:rgb(110, 110, 110);
 }
 div.search-container input{
     float:left;
@@ -208,5 +209,5 @@ div.search-container i{
 }
 div.search-container p{
     margin-bottom:4px;
-    color:rgb(255, 255, 255);
+    color:rgb(0, 0, 0);
 }

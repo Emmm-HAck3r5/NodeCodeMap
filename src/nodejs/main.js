@@ -123,7 +123,7 @@ function openDirectory() {
   dialog.showOpenDialog(
     {properties:['openDirectory']},
     function (dir) {
-      const pythonFile = '../python/global.py';
+      const pythonFile = 'D:\\Emmm_HAck3r5\\NCM_release\\py\\global.py';
       try {
         const pythonBuffer = exec(`python ${pythonFile} ${dir}`);
         win.webContents.send('pythonDone', pythonBuffer.toString());
